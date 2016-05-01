@@ -21,7 +21,7 @@
         android:text="Mobile Hockey" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="Login"
@@ -29,22 +29,29 @@
         android:onClick="goToLoginActivity"/>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Register"
+        android:layout_gravity="center_horizontal"/>
+
+<!--    <Button
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="New Game" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="High Scores"
         android:layout_gravity="center_horizontal" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Options" />
+        android:text="Options" />-->
 
 </LinearLayout>
