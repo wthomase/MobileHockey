@@ -48,4 +48,9 @@ public class MainMenuActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SignInActivity.class);
         startActivity(intent);
     }
+
+    public void goToLoginMenuActivity(View view) {
+        Intent intent = new Intent(this, LoginMenuActivity.class);
+        startActivity(intent);
+    }
 }

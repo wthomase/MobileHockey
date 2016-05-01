@@ -24,12 +24,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:text="Login"
         android:id="@+id/login_button"
         android:layout_gravity="right" />
 
-    <Space
+    <!--<Space
         android:layout_width="1dp"
         android:layout_height="90sp"/>
 
@@ -58,8 +58,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:id="@+id/register_button"
         android:text="Register"
-        android:layout_gravity="right" />
+        android:layout_gravity="right"--> />
 </LinearLayout>
