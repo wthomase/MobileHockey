@@ -33,7 +33,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterFragm
     }
 
     public void register(String userid, String pwd, String URL) {
-        AddCourseTask task = new AddCourseTask();
+        AddUserTask task = new AddUserTask();
         task.execute(new String[]{URL.toString()});
 
         // Takes you back to the previous fragment by popping the current fragment out.
@@ -46,7 +46,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterFragm
 
     }
 
-    private class AddCourseTask extends AsyncTask<String, Void, String> {
+    private class AddUserTask extends AsyncTask<String, Void, String> {
 
 
         @Override

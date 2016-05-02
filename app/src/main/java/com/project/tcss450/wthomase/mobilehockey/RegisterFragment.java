@@ -86,7 +86,7 @@ public class RegisterFragment extends Fragment {
             sb.append("&pwd=");
             sb.append(pwd);
 
-            Log.i("RegisterAddFragment", sb.toString());
+            Log.i("Generated Register URL:", sb.toString());
 
         }
         catch(Exception e) {

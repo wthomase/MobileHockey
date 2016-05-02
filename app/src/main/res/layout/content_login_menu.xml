@@ -44,7 +44,7 @@
             android:textSize="16sp"
             android:text="Logged in as: "
             android:id="@+id/current_logged_user"
-            android:layout_gravity="right" />
+            android:layout_gravity="center" />
 
         <!--<Button
             android:layout_width="120dp"

@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,9 @@ import android.widget.Toast;
 import com.project.tcss450.wthomase.mobilehockey.authenticate.SignInActivity;
 
 public class LoginFragment extends Fragment {
+
+    private final String USER_LOGIN_URL =
+            "http://cssgate.insttech.washington.edu/~wthomase/login.php?";
 
     public LoginFragment() {
         // Required empty public constructor
@@ -66,9 +70,8 @@ public class LoginFragment extends Fragment {
                     return;
                 }
 
-                MainMenuActivity.userLogged = userIdText.getText().toString();
-
-                ((SignInActivity) getActivity()).login(userId, pwd);
+                String URL = loginUserURL(v, userId, pwd);
+                ((SignInActivity) getActivity()).login(userId, pwd, URL);
             }
         });
 
@@ -87,8 +90,30 @@ public class LoginFragment extends Fragment {
         return v;
     }
 
+    private String loginUserURL(View v, String userid, String pwd) {
+
+        StringBuilder sb = new StringBuilder(USER_LOGIN_URL);
+
+        try {
+
+            sb.append("email=");
+            sb.append(userid);
+
+            sb.append("&pwd=");
+            sb.append(pwd);
+
+            Log.i("Generated Login URL:", sb.toString());
+
+        }
+        catch(Exception e) {
+            Toast.makeText(v.getContext(), "Something wrong with the url" + e.getMessage(), Toast.LENGTH_LONG)
+                    .show();
+        }
+        return sb.toString();
+    }
+
     public interface LoginInteractionListener {
-        public void login(String userId, String pwd);
+        public void login(String userId, String pwd, String URL);
     }
 
 }
