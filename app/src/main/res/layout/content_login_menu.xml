@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
+    android:id="@+id/login_menu_fragment_container"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -23,7 +24,8 @@
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="New Game" />
+            android:text="New Game"
+            android:onClick="switchToSubmitHighScoreActivity"/>
 
         <Button
             android:layout_width="120dp"
@@ -36,7 +38,8 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="High Scores"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:onClick="switchToHighScoreActivity"/>
 
         <TextView
             android:layout_width="wrap_content"

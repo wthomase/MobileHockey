@@ -22,7 +22,10 @@
         </activity>
         <activity android:name=".authenticate.SignInActivity" />
         <activity android:name=".LoginMenuActivity" />
-        <activity android:name=".authenticate.RegisterActivity"></activity>
+        <activity android:name=".authenticate.RegisterActivity" />
+        <activity android:name=".GameActivity" />
+        <activity android:name=".HighScoreActivity" />
+        <activity android:name=".SubmitHighScoreActivity"></activity>
     </application>
 
 </manifest>
