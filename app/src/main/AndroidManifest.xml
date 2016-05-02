@@ -20,7 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".authenticate.SignInActivity"></activity>
+        <activity android:name=".authenticate.SignInActivity" />
+        <activity android:name=".LoginMenuActivity" />
+        <activity android:name=".authenticate.RegisterActivity"></activity>
     </application>
 
 </manifest>

@@ -29,6 +29,14 @@
         android:id="@+id/login_button"
         android:layout_gravity="right" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Login As Guest"
+        android:id="@+id/login_guest_button"
+        android:layout_gravity="right" />
+
     <!--<Space
         android:layout_width="1dp"
         android:layout_height="90sp"/>

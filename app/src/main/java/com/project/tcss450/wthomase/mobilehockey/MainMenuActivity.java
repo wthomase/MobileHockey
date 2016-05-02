@@ -10,9 +10,12 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.project.tcss450.wthomase.mobilehockey.authenticate.RegisterActivity;
 import com.project.tcss450.wthomase.mobilehockey.authenticate.SignInActivity;
 
 public class MainMenuActivity extends AppCompatActivity {
+
+    public static String userLogged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +47,13 @@ public class MainMenuActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToLoginActivity(View view) {
+    public void goToSignInActivity(View view) {
         Intent intent = new Intent(this, SignInActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToRegisterActivity(View view) {
+        Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
 

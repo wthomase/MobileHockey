@@ -26,14 +26,15 @@
         android:gravity="center"
         android:text="Login"
         android:layout_gravity="center_horizontal"
-        android:onClick="goToLoginActivity"/>
+        android:onClick="goToSignInActivity"/>
 
     <Button
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="Register"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:onClick="goToRegisterActivity"/>
 
 <!--    <Button
         android:layout_width="120dp"

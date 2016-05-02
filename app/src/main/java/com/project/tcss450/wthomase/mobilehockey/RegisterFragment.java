@@ -1,24 +1,24 @@
 package com.project.tcss450.wthomase.mobilehockey;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.project.tcss450.wthomase.mobilehockey.authenticate.SignInActivity;
+import com.project.tcss450.wthomase.mobilehockey.authenticate.RegisterActivity;
 
-public class LoginFragment extends Fragment {
+public class RegisterFragment extends Fragment {
 
-    public LoginFragment() {
+    private final String USER_REGISTER_URL =
+            "http://cssgate.insttech.washington.edu/~wthomase/addUser.php?";
+
+    public RegisterFragment() {
         // Required empty public constructor
     }
 
@@ -26,12 +26,11 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_login, container, false);
-        final EditText userIdText = (EditText) v.findViewById(R.id.edittext_login_username);
-        final EditText pwdText = (EditText) v.findViewById(R.id.edittext_login_password);
-        Button signInButton = (Button) v.findViewById(R.id.login_button);
-        Button signInGuestButton = (Button) v.findViewById(R.id.login_guest_button);
-        signInButton.setOnClickListener(new View.OnClickListener() {
+        View v =  inflater.inflate(R.layout.fragment_register, container, false);
+        final EditText userIdText = (EditText) v.findViewById(R.id.edittext_register_username);
+        final EditText pwdText = (EditText) v.findViewById(R.id.edittext_register_password);
+        Button registerButton = (Button) v.findViewById(R.id.register_button);
+        registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String userId = userIdText.getText().toString();
@@ -66,29 +65,39 @@ public class LoginFragment extends Fragment {
                     return;
                 }
 
-                MainMenuActivity.userLogged = userIdText.getText().toString();
+                String url = addUserURL(v, userIdText.getText().toString(), pwdText.getText().toString());
 
-                ((SignInActivity) getActivity()).login(userId, pwd);
-            }
-        });
-
-        signInGuestButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setClass(getActivity(), LoginMenuActivity.class);
-                getActivity().startActivity(intent);
-
-                Toast.makeText(getActivity().getApplicationContext(), "Logged in as Guest",
-                        Toast.LENGTH_SHORT).show();
+                ((RegisterActivity) getActivity()).register(userId, pwd, url);
             }
         });
 
         return v;
     }
 
-    public interface LoginInteractionListener {
-        public void login(String userId, String pwd);
+    private String addUserURL(View v, String userid, String pwd) {
+
+        StringBuilder sb = new StringBuilder(USER_REGISTER_URL);
+
+        try {
+
+            sb.append("email=");
+            sb.append(userid);
+
+            sb.append("&pwd=");
+            sb.append(pwd);
+
+            Log.i("RegisterAddFragment", sb.toString());
+
+        }
+        catch(Exception e) {
+            Toast.makeText(v.getContext(), "Something wrong with the url" + e.getMessage(), Toast.LENGTH_LONG)
+                    .show();
+        }
+        return sb.toString();
+    }
+
+    public interface RegisterInteractionListener {
+        public void register(String userId, String pwd, String URL);
     }
 
 }
