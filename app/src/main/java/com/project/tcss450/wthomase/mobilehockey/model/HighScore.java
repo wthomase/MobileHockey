@@ -5,9 +5,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class HighScore implements Serializable {
+public class HighScore implements Serializable, Comparable<HighScore> {
 
     private String mUserId;
     private String mHighScore;
@@ -17,6 +19,10 @@ public class HighScore implements Serializable {
     public HighScore(String id, String highScore) {
         mUserId = id;
         mHighScore = highScore;
+    }
+
+    public int compareTo(HighScore other) {
+        return Integer.parseInt(other.getmHighScore()) - Integer.parseInt(mHighScore);
     }
 
     public String getmHighScore() {
@@ -52,6 +58,8 @@ public class HighScore implements Serializable {
                     HighScore course = new HighScore(obj.getString(HighScore.ID), obj.getString(HighScore.HIGHSCORE));
                     highScoreList.add(course);
                 }
+
+                Collections.sort(highScoreList);
             } catch (JSONException e) {
                 reason =  "Unable to parse data, Reason: " + e.getMessage();
             }
