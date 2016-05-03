@@ -27,4 +27,12 @@
         android:layout_gravity="right"
         android:onClick="buttonRespondSubmitHighScores"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="220dp"
+        android:text="Send High Scores"
+        android:onClick="sendHighScores"
+        />
+
 </LinearLayout>

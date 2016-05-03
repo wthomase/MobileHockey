@@ -19,12 +19,6 @@
         android:text="High Scores"
         android:id="@+id/high_score_text"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="220dp"
-        android:text="Send High Scores"
-        android:onClick="sendHighScores"
-        />
+
 
 </RelativeLayout>
