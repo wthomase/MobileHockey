@@ -10,4 +10,21 @@
     android:id="@+id/high_score_activity_fragment_container"
     tools:context="com.project.tcss450.wthomase.mobilehockey.HighScoreActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="32sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:text="High Scores"
+        android:id="@+id/high_score_text"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="220dp"
+        android:text="Send High Scores"
+        android:onClick="sendHighScores"
+        />
+
 </RelativeLayout>
