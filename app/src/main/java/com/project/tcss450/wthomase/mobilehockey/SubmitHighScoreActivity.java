@@ -52,6 +52,15 @@ public class SubmitHighScoreActivity extends AppCompatActivity {
         task.execute(new String[]{URL.toString()});
     }
 
+    public void sendHighScores(View view) {
+        Intent sendIntent = new Intent();
+        EditText score = (EditText) findViewById(R.id.edittext_enter_highscore_test);
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "I just scored " + score.getText().toString() + " in MobileHockey!");
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
+    }
+
 
     private String buildHighScoreURL(View v, String userid, String score) {
 

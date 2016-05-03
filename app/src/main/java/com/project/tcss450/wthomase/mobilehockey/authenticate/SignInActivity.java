@@ -97,8 +97,8 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
             try {
                 JSONObject jsonObject = new JSONObject(result);
                 String status = (String) jsonObject.get("result");
-                String email = (String) jsonObject.get("email");
                 if (status.equals("success")) {
+                    String email = (String) jsonObject.get("email");
                     Toast.makeText(getApplicationContext(), email + " logged in successfully!"
                             , Toast.LENGTH_LONG)
                             .show();

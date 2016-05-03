@@ -26,12 +26,5 @@ public class HighScoreActivity extends AppCompatActivity implements HighScoreLis
     @Override
     public void onListFragmentInteraction(HighScore item) { }
 
-    public void sendHighScores(View view) {
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Check out these high scores!");
-        sendIntent.setType("text/plain");
-        startActivity(sendIntent);
-    }
 
 }
