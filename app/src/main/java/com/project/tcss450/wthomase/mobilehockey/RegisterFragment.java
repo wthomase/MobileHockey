@@ -13,15 +13,33 @@ import android.widget.Toast;
 
 import com.project.tcss450.wthomase.mobilehockey.authenticate.RegisterActivity;
 
+/**
+ *
+ */
 public class RegisterFragment extends Fragment {
 
+    /**
+     * URL of the php file that interacts with the database that holds the registered users and adds new users.
+     */
     private final String USER_REGISTER_URL =
             "http://cssgate.insttech.washington.edu/~wthomase/addUser.php?";
 
+    /**
+     * Constructor for the RegisterFragment class.
+     */
     public RegisterFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Sets up the editText and button components in fragment_register that will show up on the activity_register
+     * view, determines whether the userid and password entered of the correct format, and then tells the user if
+     * their registration was successful or unsuccessful by way of Toasts.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -74,6 +92,14 @@ public class RegisterFragment extends Fragment {
         return v;
     }
 
+    /**
+     * Tries to add the new user to the database with the userid (email) and pwd (password) that the user provides.
+     * If there is an exception, a Toast will display alerting the user that something went wrong with the URL.
+     * @param v the view
+     * @param userid the user's email
+     * @param pwd the user's password
+     * @return
+     */
     private String addUserURL(View v, String userid, String pwd) {
 
         StringBuilder sb = new StringBuilder(USER_REGISTER_URL);
@@ -96,6 +122,9 @@ public class RegisterFragment extends Fragment {
         return sb.toString();
     }
 
+    /**
+     *
+     */
     public interface RegisterInteractionListener {
         public void register(String userId, String pwd, String URL);
     }

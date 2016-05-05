@@ -21,8 +21,15 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ *
+ */
 public class SignInActivity extends AppCompatActivity implements LoginFragment.LoginInteractionListener {
 
+    /**
+     * Sets the Activity view to display the activity_sign_in information.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,11 +41,21 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
         setContentView(R.layout.activity_sign_in);
     }
 
+    /**
+     *
+     * @param userid the user's email
+     * @param pwd the user's password
+     * @param URL
+     */
     public void login(String userid, String pwd, String URL) {
         LoginUserTask task = new LoginUserTask();
         task.execute(new String[]{URL.toString()});
     }
 
+    /**
+     * Called when a login is successful.
+     * Opens the LoginMenuActivity.
+     */
     public void onSuccess() {
         final EditText text = (EditText) findViewById(R.id.edittext_login_username);
         MainMenuActivity.userLogged = text.getText().toString();
@@ -47,14 +64,25 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
         finish();
     }
 
+    /**
+     *
+     */
     private class LoginUserTask extends AsyncTask<String, Void, String> {
 
 
+        /**
+         *
+         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
         }
 
+        /**
+         *
+         * @param urls
+         * @return
+         */
         @Override
         protected String doInBackground(String... urls) {
             String response = "";
@@ -73,6 +101,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                     }
 
                 } catch (Exception e) {
+                    // What is this for?
                     response = "Unable to add user, Reason: "
                             + e.getMessage();
                 } finally {

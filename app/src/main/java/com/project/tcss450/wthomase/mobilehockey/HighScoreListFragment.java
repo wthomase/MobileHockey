@@ -87,7 +87,7 @@ public class HighScoreListFragment extends Fragment {
             //recyclerView.setAdapter(new MyHighScoreRecyclerViewAdapter(HighScore.ITEMS, mListener));
         }
 
-        DownloadCoursesTask task = new DownloadCoursesTask();
+        DownloadHighScoresTask task = new DownloadHighScoresTask();
         task.execute(new String[]{HIGHSCORE_URL});
 
         return view;
@@ -126,7 +126,7 @@ public class HighScoreListFragment extends Fragment {
         void onListFragmentInteraction(HighScore item);
     }
 
-    private class DownloadCoursesTask extends AsyncTask<String, Void, String> {
+    private class DownloadHighScoresTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
             String response = "";
@@ -145,7 +145,7 @@ public class HighScoreListFragment extends Fragment {
                     }
 
                 } catch (Exception e) {
-                    response = "Unable to download the list of courses, Reason: "
+                    response = "Unable to download the list of high scores, Reason: "
                             + e.getMessage();
                 }
                 finally {
