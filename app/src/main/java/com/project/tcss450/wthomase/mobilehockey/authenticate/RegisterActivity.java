@@ -26,10 +26,6 @@ import java.net.URL;
  */
 public class RegisterActivity extends AppCompatActivity implements RegisterFragment.RegisterInteractionListener {
 
-    /**
-     * Sets the Activity view to display the activity_register and fragment_register_container information.
-     * @param savedInstanceState
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +38,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterFragm
     }
 
     /**
-     *
+     * Registers a new user using the userid and pwd that they entered.
      * @param userid is the email the user will use to login
      * @param pwd is the password the user will use to login
      * @param URL
@@ -66,19 +62,11 @@ public class RegisterActivity extends AppCompatActivity implements RegisterFragm
      */
     private class AddUserTask extends AsyncTask<String, Void, String> {
 
-        /**
-         *
-         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
         }
 
-        /**
-         *
-         * @param urls
-         * @return
-         */
         @Override
         protected String doInBackground(String... urls) {
             String response = "";
@@ -107,14 +95,6 @@ public class RegisterActivity extends AppCompatActivity implements RegisterFragm
             return response;
         }
 
-
-        /**
-         * It checks to see if there was a problem with the URL(Network) which is when an
-         * exception is caught. It tries to call the parse Method and checks to see if it was successful.
-         * If not, it displays the exception.
-         *
-         * @param result
-         */
         @Override
         protected void onPostExecute(String result) {
             // Something wrong with the network or the URL.

@@ -20,14 +20,10 @@ import com.project.tcss450.wthomase.mobilehockey.authenticate.SignInActivity;
 public class MainMenuActivity extends AppCompatActivity {
 
     /**
-     *
+     * A String representing the user that is currently logged in.
      */
     public static String userLogged;
 
-    /**
-     * Sets the Activity view to activity_main_menu.
-     * @param savedInstanceState
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,24 +32,12 @@ public class MainMenuActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    /**
-     * Inflate the menu; this adds items to the action bar if it is present.
-     * @param menu
-     * @return
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main_menu, menu);
         return true;
     }
 
-    /**
-     * Handle action bar item clicks here. The action bar will
-     * automatically handle clicks on the Home/Up button, so long
-     * as you specify a parent activity in AndroidManifest.xml.
-     * @param item
-     * @return
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();

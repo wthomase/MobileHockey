@@ -11,7 +11,7 @@ import com.project.tcss450.wthomase.mobilehockey.model.HighScore;
 import java.util.List;
 
 /**
- *
+ * Class used to handle the interactions with the high score list.
  */
 public class MyHighScoreRecyclerViewAdapter extends RecyclerView.Adapter<MyHighScoreRecyclerViewAdapter.ViewHolder> {
 
@@ -35,12 +35,6 @@ public class MyHighScoreRecyclerViewAdapter extends RecyclerView.Adapter<MyHighS
         mListener = listener;
     }
 
-    /**
-     * Sets the Activity view to display fragment_highscore.
-     * @param parent
-     * @param viewType
-     * @return
-     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -48,11 +42,6 @@ public class MyHighScoreRecyclerViewAdapter extends RecyclerView.Adapter<MyHighS
         return new ViewHolder(view);
     }
 
-    /**
-     *
-     * @param holder
-     * @param position
-     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
@@ -71,17 +60,13 @@ public class MyHighScoreRecyclerViewAdapter extends RecyclerView.Adapter<MyHighS
         });
     }
 
-    /**
-     * Returns the number of highscores in mValues, the list of high scores.
-     * @return the number of highscores in mValues
-     */
     @Override
     public int getItemCount() {
         return mValues.size();
     }
 
     /**
-     *
+     * Class used for storing high score entries in the high score list.
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -106,7 +91,7 @@ public class MyHighScoreRecyclerViewAdapter extends RecyclerView.Adapter<MyHighS
         public HighScore mItem;
 
         /**
-         *
+         * Returns mContentView as a String. 
          * @param view
          */
         public ViewHolder(View view) {
@@ -116,10 +101,6 @@ public class MyHighScoreRecyclerViewAdapter extends RecyclerView.Adapter<MyHighS
             mContentView = (TextView) view.findViewById(R.id.content);
         }
 
-        /**
-         * Returns mContentView as a String.
-         * @return
-         */
         @Override
         public String toString() {
             return super.toString() + " '" + mContentView.getText() + "'";

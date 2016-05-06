@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.project.tcss450.wthomase.mobilehockey.authenticate.RegisterActivity;
 
 /**
- *
+ * Fragment class used for handling the components of the fragment_login fragment.
  */
 public class RegisterFragment extends Fragment {
 
@@ -31,15 +31,6 @@ public class RegisterFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Sets up the editText and button components in fragment_register that will show up on the activity_register
-     * view, determines whether the userid and password entered of the correct format, and then tells the user if
-     * their registration was successful or unsuccessful by way of Toasts.
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
-     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -98,7 +89,7 @@ public class RegisterFragment extends Fragment {
      * @param v the view
      * @param userid the user's email
      * @param pwd the user's password
-     * @return
+     * @return the url as a String
      */
     private String addUserURL(View v, String userid, String pwd) {
 
@@ -123,7 +114,7 @@ public class RegisterFragment extends Fragment {
     }
 
     /**
-     *
+     * Interface used to listen for interaction when registering.
      */
     public interface RegisterInteractionListener {
         public void register(String userId, String pwd, String URL);

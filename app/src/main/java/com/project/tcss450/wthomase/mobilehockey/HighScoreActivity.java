@@ -7,6 +7,9 @@ import android.view.View;
 
 import com.project.tcss450.wthomase.mobilehockey.model.HighScore;
 
+/**
+ * Class used to represent the activity_high_score view.
+ */
 public class HighScoreActivity extends AppCompatActivity implements HighScoreListFragment.OnListFragmentInteractionListener{
 
     @Override

@@ -17,11 +17,6 @@ import com.project.tcss450.wthomase.mobilehockey.authenticate.RegisterActivity;
  */
 public class LoginMenuActivity extends AppCompatActivity {
 
-    /**
-     * Sets the Activity view to display the activity_login_menu information including who is logged in,
-     * whether it be a guest or a specific user.
-     * @param savedInstanceState
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
