@@ -10,7 +10,7 @@ import java.util.List;
 
 
 /**
- * The HighScore class holds the all of the data required for a high score,
+ * The HighScore class holds all of the data required for a high score,
  * including the username and the score. It also implements Comparable to allow
  * sorting of high score lists using Collections.sort().
  */
