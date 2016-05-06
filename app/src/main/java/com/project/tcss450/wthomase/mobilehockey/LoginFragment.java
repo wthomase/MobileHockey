@@ -17,15 +17,34 @@ import android.widget.Toast;
 
 import com.project.tcss450.wthomase.mobilehockey.authenticate.SignInActivity;
 
+/**
+ *
+ */
 public class LoginFragment extends Fragment {
 
+    /**
+     * URL of the php file that interacts with the database that holds the registered users to see if
+     * the userid and pwd the user enters are included.
+     */
     private final String USER_LOGIN_URL =
             "http://cssgate.insttech.washington.edu/~wthomase/login.php?";
 
+    /**
+     * Constructor for the LoginFragment class.
+     */
     public LoginFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Sets up the editText and Button components in fragment_login that will show up on the activity_sign_in view
+     * and creates Toasts to alert users if their if their login was successful, or, if their login was unsuccessful,
+     * what they need to fix in order to be successful.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,6 +95,10 @@ public class LoginFragment extends Fragment {
         });
 
         signInGuestButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Sets a listener to the LOGIN AS GUEST button and creates a Toast to be displayed alerting
+             * the user that they are now logged in as a guest.
+             */
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -90,6 +113,14 @@ public class LoginFragment extends Fragment {
         return v;
     }
 
+    /**
+     * Tries to login using the userid (email) and pwd (password) that the user provides. If there is an
+     * exception, a Toast will be created alerting the user that something went wrong with the URL.
+     * @param v the view
+     * @param userid the user's email
+     * @param pwd the user's password
+     * @return
+     */
     private String loginUserURL(View v, String userid, String pwd) {
 
         StringBuilder sb = new StringBuilder(USER_LOGIN_URL);
@@ -112,6 +143,9 @@ public class LoginFragment extends Fragment {
         return sb.toString();
     }
 
+    /**
+     *
+     */
     public interface LoginInteractionListener {
         public void login(String userId, String pwd, String URL);
     }

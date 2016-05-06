@@ -11,8 +11,17 @@ import android.widget.TextView;
 
 import com.project.tcss450.wthomase.mobilehockey.authenticate.RegisterActivity;
 
+/**
+ * Class used to handle the Login Menu Activity.
+ * Creates intents in order to change Activities when buttons are clicked in the activity_login_menu.
+ */
 public class LoginMenuActivity extends AppCompatActivity {
 
+    /**
+     * Sets the Activity view to display the activity_login_menu information including who is logged in,
+     * whether it be a guest or a specific user.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,16 +34,28 @@ public class LoginMenuActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Opens the Activity for a New Game.
+     * @param view
+     */
     public void switchToNewGameActivity(View view) {
         Intent intent = new Intent(this, GameActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Opens the Activity for the High Scores.
+     * @param view
+     */
     public void switchToHighScoreActivity(View view) {
         Intent intent = new Intent(this, HighScoreActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Opens the Activity to submit a new high score.
+     * @param view
+     */
     public void switchToSubmitHighScoreActivity(View view) {
         Intent intent = new Intent(this, SubmitHighScoreActivity.class);
         startActivity(intent);

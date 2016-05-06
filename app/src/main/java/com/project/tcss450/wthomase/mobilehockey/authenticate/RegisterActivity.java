@@ -19,8 +19,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * Class used to Register (create) new Users to this app. It will make sure that an email entered
+ * (for the username) is in the correct form and also checks to see if a password entered has the
+ * required number of characters.
+ */
 public class RegisterActivity extends AppCompatActivity implements RegisterFragment.RegisterInteractionListener {
 
+    /**
+     * Sets the Activity view to display the activity_register and fragment_register_container information.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +41,12 @@ public class RegisterActivity extends AppCompatActivity implements RegisterFragm
         setContentView(R.layout.activity_register);
     }
 
+    /**
+     *
+     * @param userid is the email the user will use to login
+     * @param pwd is the password the user will use to login
+     * @param URL
+     */
     public void register(String userid, String pwd, String URL) {
         AddUserTask task = new AddUserTask();
         task.execute(new String[]{URL.toString()});
@@ -46,14 +61,24 @@ public class RegisterActivity extends AppCompatActivity implements RegisterFragm
 
     }
 
+    /**
+     * Class used to add a new user to the database.
+     */
     private class AddUserTask extends AsyncTask<String, Void, String> {
 
-
+        /**
+         *
+         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
         }
 
+        /**
+         *
+         * @param urls
+         * @return
+         */
         @Override
         protected String doInBackground(String... urls) {
             String response = "";
