@@ -22,14 +22,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- *
+ * Class used to log existing users into the app.
  */
 public class SignInActivity extends AppCompatActivity implements LoginFragment.LoginInteractionListener {
 
-    /**
-     * Sets the Activity view to display the activity_sign_in information.
-     * @param savedInstanceState
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +38,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
     }
 
     /**
-     *
+     * Logs an existing user into the app using the userid and pwd they entered.
      * @param userid the user's email
      * @param pwd the user's password
      * @param URL
@@ -65,24 +61,15 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
     }
 
     /**
-     *
+     * Class used to handle existing users logging in.
      */
     private class LoginUserTask extends AsyncTask<String, Void, String> {
 
-
-        /**
-         *
-         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
         }
 
-        /**
-         *
-         * @param urls
-         * @return
-         */
         @Override
         protected String doInBackground(String... urls) {
             String response = "";
@@ -112,14 +99,6 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
             return response;
         }
 
-
-        /**
-         * It checks to see if there was a problem with the URL(Network) which is when an
-         * exception is caught. It tries to call the parse Method and checks to see if it was successful.
-         * If not, it displays the exception.
-         *
-         * @param result
-         */
         @Override
         protected void onPostExecute(String result) {
             // Something wrong with the network or the URL.

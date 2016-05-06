@@ -8,10 +8,6 @@ import android.os.Bundle;
  */
 public class GameActivity extends AppCompatActivity {
 
-    /**
-     * Sets the Activity view to display the Game.
-     * @param savedInstanceState
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -26,6 +26,9 @@ import java.net.URL;
 
 public class SubmitHighScoreActivity extends AppCompatActivity {
 
+    /**
+     * URL of the php file that interacts with the database that holds the high scores.
+     */
     private final String SUBMIT_HIGHSCORE_URL =
             "http://cssgate.insttech.washington.edu/~wthomase/addHighscore.php?";
 
@@ -36,6 +39,13 @@ public class SubmitHighScoreActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * After clicking the SUBMIT HIGHSCORE button:
+     * If the user is logged in as a Guest, they will see a Toast saying that they are logged in as a Guest.
+     * This means that they are unable to save high scores. If they are logged in as a non-guest user, submitHighScore()
+     * will be called to save their high score to the database.
+     * @param view
+     */
     public void buttonRespondSubmitHighScores(View view) {
         if (MainMenuActivity.userLogged == null || MainMenuActivity.userLogged.length() <= 0) {
             Toast.makeText(this, "You are logged in as a Guest.",
@@ -47,11 +57,19 @@ public class SubmitHighScoreActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Saves the high score to the database.
+     * @param URL
+     */
     public void submitHighScore(String URL) {
         SubmitHighScoreTask task = new SubmitHighScoreTask();
         task.execute(new String[]{URL.toString()});
     }
 
+    /**
+     * Opens the user's messaging application to send the cu
+     * @param view
+     */
     public void sendHighScores(View view) {
         Intent sendIntent = new Intent();
         EditText score = (EditText) findViewById(R.id.edittext_enter_highscore_test);
@@ -61,7 +79,14 @@ public class SubmitHighScoreActivity extends AppCompatActivity {
         startActivity(sendIntent);
     }
 
-
+    /**
+     * Tries to submit a new high score using the userid and score provided. If there is an exception,
+     * a Toast will display alerting the user that there was something wrong with the URL.
+     * @param v the view
+     * @param userid the user's email
+     * @param score the user's score
+     * @return
+     */
     private String buildHighScoreURL(View v, String userid, String score) {
 
         StringBuilder sb = new StringBuilder(SUBMIT_HIGHSCORE_URL);
@@ -84,6 +109,9 @@ public class SubmitHighScoreActivity extends AppCompatActivity {
         return sb.toString();
     }
 
+    /**
+     * Class in which the submission of high scores are handled.
+     */
     private class SubmitHighScoreTask extends AsyncTask<String, Void, String> {
 
 
@@ -120,14 +148,6 @@ public class SubmitHighScoreActivity extends AppCompatActivity {
             return response;
         }
 
-
-        /**
-         * It checks to see if there was a problem with the URL(Network) which is when an
-         * exception is caught. It tries to call the parse Method and checks to see if it was successful.
-         * If not, it displays the exception.
-         *
-         * @param result
-         */
         @Override
         protected void onPostExecute(String result) {
             // Something wrong with the network or the URL.

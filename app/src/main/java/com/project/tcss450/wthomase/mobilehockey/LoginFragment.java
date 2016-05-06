@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.project.tcss450.wthomase.mobilehockey.authenticate.SignInActivity;
 
 /**
- *
+ * Class representing the components displayed on the fragment_login fragment.
  */
 public class LoginFragment extends Fragment {
 
@@ -36,15 +36,6 @@ public class LoginFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Sets up the editText and Button components in fragment_login that will show up on the activity_sign_in view
-     * and creates Toasts to alert users if their if their login was successful, or, if their login was unsuccessful,
-     * what they need to fix in order to be successful.
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
-     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -119,7 +110,7 @@ public class LoginFragment extends Fragment {
      * @param v the view
      * @param userid the user's email
      * @param pwd the user's password
-     * @return
+     * @return the url as a String
      */
     private String loginUserURL(View v, String userid, String pwd) {
 
@@ -144,7 +135,7 @@ public class LoginFragment extends Fragment {
     }
 
     /**
-     *
+     * Interface used to listen for interactions when logging in.
      */
     public interface LoginInteractionListener {
         public void login(String userId, String pwd, String URL);
