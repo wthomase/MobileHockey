@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.project.tcss450.wthomase.mobilehockey.authenticate.RegisterActivity;
+import com.project.tcss450.wthomase.mobilehockey.gameengine.GameEngine;
 
 /**
  * Class used to handle the Login Menu Activity.
@@ -34,7 +35,7 @@ public class LoginMenuActivity extends AppCompatActivity {
      * @param view
      */
     public void switchToNewGameActivity(View view) {
-        Intent intent = new Intent(this, GameActivity.class);
+        Intent intent = new Intent(this, GameEngine.class);
         startActivity(intent);
     }
 

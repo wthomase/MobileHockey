@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="New Game"
-            android:onClick="switchToSubmitHighScoreActivity"/>
+            android:onClick="switchToNewGameActivity"/>
 
         <Button
             android:layout_width="120dp"

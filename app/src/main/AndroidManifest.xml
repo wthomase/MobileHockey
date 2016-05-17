@@ -25,7 +25,8 @@
         <activity android:name=".authenticate.RegisterActivity" />
         <activity android:name=".GameActivity" />
         <activity android:name=".HighScoreActivity" />
-        <activity android:name=".SubmitHighScoreActivity"></activity>
+        <activity android:name=".SubmitHighScoreActivity" />
+        <activity android:name=".gameengine.GameEngine"></activity>
     </application>
 
 </manifest>
