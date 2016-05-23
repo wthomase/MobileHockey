@@ -53,17 +53,19 @@ public class GameEngine extends Activity {
 
         // A boolean which we will set and unset
         // when the game is running- or not.
-        volatile boolean playing;
+        private volatile boolean playing;
 
         // A Canvas and a Paint object
-        Canvas canvas;
-        Paint paint;
+        private Canvas canvas;
+        private Paint paint;
 
-        int canvasWidth;
-        int canvasHeight;
+        // Canvas data
+        private int canvasWidth;
+        private int canvasHeight;
+        private float canvasFriction = 0.9f;
 
         // This variable tracks the game frame rate
-        long fps;
+        private long fps;
 
         // Used to track the velocity of touch based events
         private VelocityTracker mVelocityTracker;
@@ -74,31 +76,34 @@ public class GameEngine extends Activity {
         private Timer gameTimer;
         private double clockTick;
 
+        // AI variables
         private boolean aiEnabled;
         private float aiSpeed;
 
-        // Declare an object of type Bitmap
-        Bitmap bitmapMallet1;
-        Bitmap bitmapMallet2;
-        Bitmap bitmapPuck;
+        // Scoreboard
+        private int player1Score;
+        private int player2Score;
 
         // Detects whether the mallet is moving or not
-        boolean isMoving = false;
+        private boolean isMoving = false;
 
-        // He starts 10 pixels from the left
-        float mallet1_XPosition;
-        float mallet1_YPosition;
+        // The player mallet data
+        private float mallet1_XPosition;
+        private float mallet1_YPosition;
+        private float mallet1_Radius;
 
-        float mallet2_XPosition;
-        float mallet2_YPosition;
-
+        // The AI mallet data
+        private float mallet2_XPosition;
+        private float mallet2_YPosition;
+        private float mallet2_Radius;
 
         // Puck data
-        float puckXposition;
-        float puckYposition;
-        float puckXvelocity = 0;
-        float puckYvelocity = -500;
-        float puckMaxVelocity = 1000;
+        private float puckXposition;
+        private float puckYposition;
+        private float puckRadius;
+        private float puckXvelocity = 0;
+        private float puckYvelocity = -500;
+        private float puckMaxVelocity = 2500;
 
         // When the we initialize (call new()) on gameView
         // This special constructor method runs
@@ -124,22 +129,24 @@ public class GameEngine extends Activity {
             aiSpeed = 250;
 
             gameTimer = new Timer();
+            mVelocityTracker = VelocityTracker.obtain();
 
-            // Load mallets from the .png files
-            bitmapMallet1 = BitmapFactory.decodeResource(this.getResources(), R.drawable.mallet_test);
-            bitmapMallet2 = BitmapFactory.decodeResource(this.getResources(), R.drawable.mallet_test);
-            bitmapPuck = BitmapFactory.decodeResource(this.getResources(), R.drawable.puck);
-
-            // initialize positions and velocities
-            mallet1_XPosition = (canvasWidth / 2) - (bitmapPuck.getWidth() / 2);
-            mallet1_YPosition = 100;
+            player1Score = 0;
+            player2Score = 0;
 
             // initialize positions and velocities
-            mallet2_XPosition = (canvasWidth / 2) - (bitmapMallet1.getWidth() / 2);
-            mallet2_YPosition = canvasHeight - 100 - (bitmapMallet2.getHeight());
+            mallet1_Radius = 100;
+            mallet1_XPosition = (canvasWidth / 2);
+            mallet1_YPosition = 100 + mallet1_Radius;
 
-            puckXposition = (canvasWidth / 2) - (bitmapPuck.getHeight() / 2);
-            puckYposition = (canvasHeight / 2) - (bitmapPuck.getWidth() / 2);
+
+            mallet2_Radius = 100;
+            mallet2_XPosition = (canvasWidth / 2);
+            mallet2_YPosition = canvasHeight - 100 - mallet2_Radius;
+
+            puckXposition = (canvasWidth / 2);
+            puckYposition = (canvasHeight / 2);
+            puckRadius = 75;
         }
 
         @Override
@@ -181,32 +188,40 @@ public class GameEngine extends Activity {
             puckYposition += puckYvelocity * ((float) clockTick);
 
             // Check puck collision with mallet1
-            if (isPuckMalletColliding(bitmapMallet1, mallet1_XPosition, mallet1_YPosition)) {
+            if (isPuckMalletColliding(mallet1_XPosition, mallet1_YPosition, mallet1_Radius)) {
                 // Collision detected between player mallet and puck, give the puck the mallet velocity
-                puckYvelocity = -puckYvelocity;
-                puckXvelocity = puckXposition - mallet1_XPosition;
-//                if (mVelocityTracker != null) {
-//                    mVelocityTracker.computeCurrentVelocity(1000, puckMaxVelocity);
-//
-//                    // if our x-velocities are traveling in the same direction, reverse it
-//                    // so we don't collide with the mallet
-//                    float diffX = puckXposition - mallet1_XPosition;
-//                    //diffX += mVelocityTracker.getXVelocity();
-//                    puckXvelocity = diffX;
-//
-//                    float speed = (float) Math.sqrt(puckXvelocity * puckXvelocity + puckYvelocity * puckYvelocity);
-//                    if (speed > puckMaxVelocity) {
-//                        float ratio = puckMaxVelocity / speed;
-//                        puckXvelocity *= ratio;
-//                        puckYvelocity *= ratio;
-//                    }
-//                }
+                if (mVelocityTracker != null) {
+                    mVelocityTracker.computeCurrentVelocity(1000, puckMaxVelocity);
+
+                    float dist = distance(puckXposition, puckYposition, mallet1_XPosition, mallet1_YPosition);
+                    float delta = puckRadius + mallet1_Radius - dist;
+                    float difX = (puckXposition - mallet1_XPosition) / dist;
+                    float difY = (puckYposition - mallet1_YPosition) / dist;
+
+                    puckXposition += difX * delta / 2;
+                    puckYposition += difY * delta / 2;
+
+                    if (mVelocityTracker.getXVelocity() == 0 && mVelocityTracker.getYVelocity() == 0) {
+                        puckXvelocity = -puckXvelocity * 0.4f;
+                        puckYvelocity = -puckYvelocity * 0.4f;
+                    } else {
+                        puckXvelocity = mVelocityTracker.getXVelocity();
+                        puckYvelocity = mVelocityTracker.getYVelocity();
+                    }
+
+                    float speed = (float) Math.sqrt(puckXvelocity * puckXvelocity + puckYvelocity * puckYvelocity);
+                    if (speed > puckMaxVelocity) {
+                        float ratio = puckMaxVelocity / speed;
+                        puckXvelocity *= ratio;
+                        puckYvelocity *= ratio;
+                    }
+                }
                 puckXposition += puckXvelocity * ((float) clockTick);
                 puckYposition += puckYvelocity * ((float) clockTick);
             }
 
-            // Check puck collision with mallet1
-            if (isPuckMalletColliding(bitmapMallet2, mallet2_XPosition, mallet2_YPosition)) {
+            // Check puck collision with mallet2
+            if (isPuckMalletColliding(mallet2_XPosition, mallet2_YPosition, mallet2_Radius)) {
                 // Collision detected between player mallet and puck, give the puck the mallet velocity
                 puckYvelocity = -puckYvelocity;
                 puckXvelocity = puckXposition - mallet2_XPosition;
@@ -215,24 +230,23 @@ public class GameEngine extends Activity {
             }
 
             // Check collision of puck with canvas
-            if (collideLeft(bitmapPuck, puckXposition, puckYposition)
-                || collideRight(bitmapPuck, puckXposition, puckYposition)) {
+            if (collideLeft(puckXposition, puckRadius)
+                || collideRight(puckXposition, puckRadius)) {
                 puckXvelocity = -puckXvelocity;
-                if (collideLeft(bitmapPuck, puckXposition, puckYposition)) puckXposition = 0;
-                if (collideRight(bitmapPuck, puckXposition, puckYposition)) puckXposition = canvasWidth - bitmapPuck.getWidth();
+                if (collideLeft(puckXposition, puckRadius)) puckXposition = puckRadius;
+                if (collideRight(puckXposition, puckRadius)) puckXposition = canvasWidth - puckRadius;
                 puckXposition += puckXvelocity * ((float) clockTick);
                 puckYposition += puckYvelocity * ((float) clockTick);
             }
 
-            if (collideTop(bitmapPuck, puckXposition, puckYposition)
-                    || collideBottom(bitmapPuck, puckXposition, puckYposition)) {
-                puckYvelocity = -puckYvelocity;
-                //puckXposition = (canvasWidth / 2) - (bitmapPuck.getWidth() / 2);
-                //puckYposition = (canvasHeight / 2) - (bitmapPuck.getHeight() / 2);
-                if (collideTop(bitmapPuck, puckXposition, puckYposition)) puckYposition = 0;
-                if (collideBottom(bitmapPuck, puckXposition, puckYposition)) puckYposition = canvasHeight - bitmapPuck.getHeight();
-                puckXposition += puckXvelocity * ((float) clockTick);
-                puckYposition += puckYvelocity * ((float) clockTick);
+            if (collideTop(puckYposition, puckRadius)
+                    || collideBottom(puckYposition, puckRadius)) {
+                if (collideTop(puckYposition, puckRadius)) player2Score++;
+                if (collideBottom(puckYposition, puckRadius)) player1Score++;
+                puckXvelocity = 0;
+                puckYvelocity = 0;
+                puckXposition = canvasWidth / 2;
+                puckYposition = canvasHeight / 2;
             }
 
             // check AI
@@ -245,6 +259,10 @@ public class GameEngine extends Activity {
                     mallet2_XPosition -= aiSpeed *((float) clockTick);
                 }
             }
+
+            puckXvelocity -= (1 - canvasFriction) * clockTick * puckXvelocity;
+            puckYvelocity -= (1 - canvasFriction) * clockTick * puckYvelocity;
+            mVelocityTracker.clear();
         }
 
         // Draw the newly updated scene
@@ -267,11 +285,36 @@ public class GameEngine extends Activity {
 
                 // Display the current fps on the screen
                 canvas.drawText("FPS:" + fps, 20, 40, paint);
+                mVelocityTracker.computeCurrentVelocity(1000, puckMaxVelocity);
+                canvas.drawText("X-vel: " + mVelocityTracker.getXVelocity(), 20, 80, paint);
+                canvas.drawText("Y-vel: " + mVelocityTracker.getYVelocity(), 20, 140, paint);
+                canvas.drawText("current X Pos: " + mallet1_XPosition, 20, 250, paint);
+                canvas.drawText("current Y Pos: " + mallet1_YPosition, 20, 280, paint);
 
-                // Draw bitmaps
-                canvas.drawBitmap(bitmapMallet1, mallet1_XPosition, mallet1_YPosition, paint);
-                canvas.drawBitmap(bitmapPuck, puckXposition, puckYposition, paint);
-                canvas.drawBitmap(bitmapMallet2, mallet2_XPosition, mallet2_YPosition, paint);
+                // Draw "hockey table" elements
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setColor(Color.parseColor("#000000"));
+                paint.setStrokeWidth(8);
+                int scaledSize = getResources().getDimensionPixelSize(R.dimen.scoreTextSize);
+                paint.setTextSize(scaledSize);
+                canvas.drawText(player1Score + "", (canvasWidth * 0.75f), (canvasHeight / 2) * 0.9f, paint);
+                canvas.drawText(player2Score + "", (canvasWidth * 0.75f), (canvasHeight / 2) * 1.2f, paint);
+                canvas.drawLine(0, canvasHeight / 2, canvasWidth, canvasHeight / 2, paint);
+                canvas.drawCircle(canvasWidth / 2, canvasHeight / 2, 100, paint);
+
+                paint.setStyle(Paint.Style.FILL);
+
+                // Draw player mallet (BLUE)
+                paint.setColor(Color.parseColor("#ADD8E6"));
+                canvas.drawCircle(mallet1_XPosition, mallet1_YPosition, mallet1_Radius, paint);
+
+                // Draw AI mallet (RED)
+                paint.setColor(Color.parseColor("#FF0000"));
+                canvas.drawCircle(mallet2_XPosition, mallet2_YPosition, mallet2_Radius, paint);
+
+                // Draw puck (BLACK)
+                paint.setColor(Color.parseColor("#000000"));
+                canvas.drawCircle(puckXposition, puckYposition, puckRadius, paint);
 
                 // Draw everything to the screen
                 // and unlock the drawing surface
@@ -319,7 +362,7 @@ public class GameEngine extends Activity {
                     float y = motionEvent.getY();
 
                     // Detects whether the touch point is colliding with the mallet
-                    if (isTouchColliding(bitmapMallet1, mallet1_XPosition, mallet1_YPosition, x, y)) {
+                    if (isTouchColliding(mallet1_Radius, mallet1_XPosition, mallet1_YPosition, x, y)) {
                         isMoving = true;
                     }
 
@@ -327,23 +370,44 @@ public class GameEngine extends Activity {
 
                 // Player is holding down on the screen
                 case MotionEvent.ACTION_MOVE:
-                    float curX = motionEvent.getX();
-                    float curY = motionEvent.getY();
+                    float newX = motionEvent.getX();
+                    float newY = motionEvent.getY();
 
-                    if (isMoving && isTouchColliding(bitmapMallet1, mallet1_XPosition, mallet1_YPosition, curX, curY)) {
-                        if (!isPuckMalletColliding(bitmapMallet1, mallet1_XPosition, mallet1_YPosition)) {
-                            mVelocityTracker.addMovement(motionEvent);
-                            float newX = motionEvent.getX() - (bitmapMallet1.getWidth() / 2);
-                            float newY = motionEvent.getY() - (bitmapMallet1.getHeight() / 2);
+                    if (isMoving) {
+                        // if we aren't colliding with the puck, check to see if we're colliding with
+                        // the walls and change our position if appropriate
+                        mVelocityTracker.addMovement(motionEvent);
 
-                            if (!collideLeft(bitmapMallet1, newX, newY) &&
-                                    !collideRight(bitmapMallet1, newX, newY)) {
+                        if (!isPuckMalletColliding(mallet1_XPosition, mallet1_YPosition, mallet1_Radius)) {
+
+                            boolean isCollidingLeftRight = collideLeft(mallet1_XPosition, mallet1_Radius) &&
+                                    collideRight(newX, mallet1_Radius);
+                            boolean isCollidingUpDown = (collideBottom(mallet1_YPosition, mallet1_Radius) &&
+                                    collideTop(newY, mallet1_Radius));
+
+                            if (!isCollidingLeftRight) {
                                 mallet1_XPosition = newX;
                             }
 
-                            if (!collideBottom(bitmapMallet1, newX, newY) &&
-                                    !collideTop(bitmapMallet1, newX, newY)) {
-                                //mallet1_YPosition = newY;
+                            if (!isCollidingUpDown) {
+                                mallet1_YPosition = newY;
+                            }
+                        // else we are colliding with the puck, allow movement if it makes us unstuck
+                        // with the puck
+                        } else {
+                            boolean isCollidingLeftRight = collideLeft(newX, mallet1_Radius) &&
+                                    collideRight(newX, mallet1_Radius);
+                            boolean isCollidingUpDown = (collideBottom(newY, mallet1_Radius) &&
+                                    collideTop(newY, mallet1_Radius));
+
+                            if (!isPuckMalletColliding(newX, newY, mallet1_Radius)) {
+                                if (!isCollidingLeftRight) {
+                                    mallet1_XPosition = newX;
+                                }
+
+                                if (!isCollidingUpDown) {
+                                    mallet1_YPosition = newY;
+                                }
                             }
                         }
                     }
@@ -353,55 +417,52 @@ public class GameEngine extends Activity {
                 // Player has removed finger from screen
                 case MotionEvent.ACTION_UP:
 
-                    // Set isMoving so Bob does not move
                     if (isMoving) {
                         isMoving = false;
                     }
 
 
                     break;
+
+                case MotionEvent.ACTION_CANCEL:
+                    // Return a VelocityTracker object back to be re-used by others.
+                    mVelocityTracker.recycle();
+                    break;
+
             }
             return true;
         }
 
-        public boolean isPuckMalletColliding(Bitmap mallet, float xcoord, float ycoord) {
+        public boolean isPuckMalletColliding(float x1, float y1, float radius) {
             // Check collision of puck with mallet
-            if (puckXposition < xcoord + mallet.getWidth() &&
-                    puckXposition + bitmapPuck.getWidth() > xcoord &&
-                    puckYposition < ycoord + mallet.getHeight() &&
-                    puckYposition + bitmapPuck.getHeight() > ycoord) {
-                return true;
-            }
-            return false;
+            return circlesColliding(radius, puckRadius, x1, y1, puckXposition, puckYposition);
 
         }
 
-        // Checks whether the given touch coordinates are colliding with our image on screen.
-        public boolean isTouchColliding(Bitmap image, float x, float y, float touchX, float touchY) {
-            if (x < touchX && x + image.getWidth() > touchX) {
-                if (y < touchY && y + image.getHeight() > touchY) {
-                    return true;
-                }
-            }
-            return false;
+        // Checks whether the given touch coordinates are colliding with our mallet on screen.
+        public boolean isTouchColliding(float radius, float x, float y, float touchX, float touchY) {
+            return circlesColliding(radius, 1, x, y, touchX, touchY);
         }
 
-        public boolean collideLeft(Bitmap image, float x, float y) {
-            return x < 0;
+        public boolean circlesColliding(float radius1, float radius2, float x1, float y1, float x2, float y2) {
+            return distance(x1, y1, x2, y2) < radius1 + radius2;
         }
 
-        public boolean collideRight(Bitmap image, float x, float y) {
-            return x + image.getWidth() > canvasWidth;
+        public boolean collideLeft(float x, float radius) {
+            return x - radius < 0;
         }
 
-        public boolean collideTop(Bitmap image, float x, float y) {
-            return y < 0;
+        public boolean collideRight(float x, float radius) {
+            return x + radius > canvasWidth;
         }
 
-        public boolean collideBottom(Bitmap image, float x, float y) {
-            return y + image.getHeight() > canvasHeight;
+        public boolean collideTop(float y, float radius) {
+            return y - radius < 0;
         }
 
+        public boolean collideBottom(float y, float radius) {
+            return y + radius > canvasHeight;
+        }
     }
 
     class Timer {
@@ -444,6 +505,12 @@ public class GameEngine extends Activity {
 
         // Tell the gameView pause method to execute
         gameView.pause();
+    }
+
+    private float distance(float x1, float y1, float x2, float y2) {
+        float dx = x1 - x2;
+        float dy = y1 - y2;
+        return (float) Math.sqrt(dx * dx + dy * dy);
     }
 
 }
