@@ -1,6 +1,8 @@
 package com.project.tcss450.wthomase.mobilehockey.authenticate;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import com.project.tcss450.wthomase.mobilehockey.LoginFragment;
 import com.project.tcss450.wthomase.mobilehockey.LoginMenuActivity;
 import com.project.tcss450.wthomase.mobilehockey.MainMenuActivity;
 import com.project.tcss450.wthomase.mobilehockey.R;
+import com.project.tcss450.wthomase.mobilehockey.data.UserInfoDB;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,15 +29,31 @@ import java.net.URL;
  */
 public class SignInActivity extends AppCompatActivity implements LoginFragment.LoginInteractionListener {
 
+    private static SharedPreferences mSharedPreferences;
+    private UserInfoDB mUserInfoDB;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, new LoginFragment() )
-                .commit();
+        mSharedPreferences = getSharedPreferences(getString(R.string.LOGIN_PREFS)
+                , Context.MODE_PRIVATE);
 
-        setContentView(R.layout.activity_sign_in);
+        if (mSharedPreferences.getBoolean(getString(R.string.LOGGEDIN), false)) {
+            Toast.makeText(getApplicationContext(), "Detected user already logged in."
+                    , Toast.LENGTH_LONG)
+                    .show();
+            Intent i = new Intent(this, LoginMenuActivity.class);
+            startActivity(i);
+            finish();
+        } else {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, new LoginFragment())
+                    .commit();
+
+            setContentView(R.layout.activity_sign_in);
+        }
     }
 
     /**
@@ -54,7 +73,21 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
      */
     public void onSuccess() {
         final EditText text = (EditText) findViewById(R.id.edittext_login_username);
+        final EditText password = (EditText) findViewById(R.id.edittext_login_password);
         MainMenuActivity.userLogged = text.getText().toString();
+        mSharedPreferences
+                .edit()
+                .putBoolean(getString(R.string.LOGGEDIN), true)
+                .commit();
+        mSharedPreferences
+                .edit()
+                .putString(getString(R.string.USERNAME_KEY), text.getText().toString())
+                .commit();
+
+        if (mUserInfoDB == null) {
+            mUserInfoDB = new UserInfoDB(SignInActivity.this);
+        }
+        mUserInfoDB.insertUser(text.toString(), password.toString());
         Intent intent = new Intent(this, LoginMenuActivity.class);
         startActivity(intent);
         finish();

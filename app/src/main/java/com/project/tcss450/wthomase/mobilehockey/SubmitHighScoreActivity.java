@@ -4,14 +4,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.project.tcss450.wthomase.mobilehockey.authenticate.SignInActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,8 +47,7 @@ public class SubmitHighScoreActivity extends AppCompatActivity {
             Toast.makeText(this, "You are logged in as a Guest.",
                     Toast.LENGTH_LONG).show();
         } else {
-            EditText score = (EditText) findViewById(R.id.edittext_enter_highscore_test);
-            String URL = buildHighScoreURL(view, MainMenuActivity.userLogged, score.getText().toString());
+            String URL = buildHighScoreURL(view, MainMenuActivity.userLogged, LoginMenuActivity.mostRecentHighScore);
             submitHighScore(URL);
         }
     }
@@ -72,9 +67,9 @@ public class SubmitHighScoreActivity extends AppCompatActivity {
      */
     public void sendHighScores(View view) {
         Intent sendIntent = new Intent();
-        EditText score = (EditText) findViewById(R.id.edittext_enter_highscore_test);
+        String highScore = LoginMenuActivity.mostRecentHighScore;
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "I just scored " + score.getText().toString() + " in MobileHockey!");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "I just scored " + highScore + " in MobileHockey!");
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
     }

@@ -1,6 +1,8 @@
 package com.project.tcss450.wthomase.mobilehockey;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -8,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.project.tcss450.wthomase.mobilehockey.authenticate.RegisterActivity;
 import com.project.tcss450.wthomase.mobilehockey.gameengine.GameEngine;
@@ -18,16 +21,18 @@ import com.project.tcss450.wthomase.mobilehockey.gameengine.GameEngine;
  */
 public class LoginMenuActivity extends AppCompatActivity {
 
+    public static String mostRecentHighScore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_menu);
         TextView logged = (TextView) findViewById(R.id.current_logged_user);
-        if (MainMenuActivity.userLogged == null) {
-            logged.setText("Logged in as: Guest");
-        } else {
-            logged.setText("Logged in as: " + MainMenuActivity.userLogged);
-        }
+        SharedPreferences mSharedPreferences = getSharedPreferences(getString(R.string.LOGIN_PREFS)
+                , Context.MODE_PRIVATE);
+
+        String curLogged = mSharedPreferences.getString(getString(R.string.USERNAME_KEY), "Guest");
+        logged.setText("Logged in as: " + curLogged);
     }
 
     /**
@@ -57,4 +62,17 @@ public class LoginMenuActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void logoutUser(View view) {
+        SharedPreferences sharedPreferences =
+                getSharedPreferences(getString(R.string.LOGIN_PREFS), Context.MODE_PRIVATE);
+        sharedPreferences.edit().putBoolean(getString(R.string.LOGGEDIN), false)
+                .commit();
+        sharedPreferences.edit().remove(getString(R.string.USERNAME_KEY)).apply();
+
+        Toast.makeText(getApplicationContext(), "Logged out successfully.",
+                Toast.LENGTH_SHORT).show();
+
+        Intent intent = new Intent(this, MainMenuActivity.class);
+        startActivity(intent);
+    }
 }

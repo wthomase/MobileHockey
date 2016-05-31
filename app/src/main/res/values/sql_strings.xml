@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string name="CREATE_COURSE_SQL">
+    CREATE TABLE IF NOT EXISTS UserInfo
+    (userid TEXT PRIMARY KEY, password)
+</string>
+
+<string name="DROP_COURSE_SQL">
+    DROP TABLE IF EXISTS UserInfo
+</string>
+
+
+
+</resources>
