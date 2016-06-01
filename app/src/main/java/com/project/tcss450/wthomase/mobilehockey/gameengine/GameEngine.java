@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -92,6 +93,7 @@ public class GameEngine extends Activity {
         private float mallet1_YPosition;
         private float mallet1_Radius;
 
+
         // The AI mallet data
         private float mallet2_XPosition;
         private float mallet2_YPosition;
@@ -104,6 +106,16 @@ public class GameEngine extends Activity {
         private float puckXvelocity = 0;
         private float puckYvelocity = -500;
         private float puckMaxVelocity = 2500;
+
+        // Goal objects
+        private RectF myGoal;
+        private RectF theirGoal;
+
+        // current time
+        private long curTime;
+        private long startTime;
+        private int secLeft;
+
 
         // When the we initialize (call new()) on gameView
         // This special constructor method runs
@@ -126,7 +138,8 @@ public class GameEngine extends Activity {
             Log.d("debug", "Canvas height: " + canvasHeight);
 
             aiEnabled = true;
-            aiSpeed = 250;
+            //aiSpeed = 250;
+            aiSpeed = 500;
 
             gameTimer = new Timer();
             mVelocityTracker = VelocityTracker.obtain();
@@ -135,18 +148,26 @@ public class GameEngine extends Activity {
             player2Score = 0;
 
             // initialize positions and velocities
+            // player 1
             mallet1_Radius = 100;
             mallet1_XPosition = (canvasWidth / 2);
-            mallet1_YPosition = 100 + mallet1_Radius;
+            mallet1_YPosition = canvasHeight - 150 - mallet1_Radius;
 
-
+            // player 2 (ai)
             mallet2_Radius = 100;
             mallet2_XPosition = (canvasWidth / 2);
-            mallet2_YPosition = canvasHeight - 100 - mallet2_Radius;
+            mallet2_YPosition = 100 + mallet2_Radius;
 
             puckXposition = (canvasWidth / 2);
             puckYposition = (canvasHeight / 2);
             puckRadius = 75;
+
+            // goals
+            myGoal = new RectF(canvasWidth/4, canvasHeight - 105, (canvasWidth/4)*3, canvasHeight);
+            theirGoal = new RectF(canvasWidth/4, 0, (canvasWidth/4)*3, 20);
+
+            startTime = System.currentTimeMillis();
+            secLeft = 60;
         }
 
         @Override
@@ -220,18 +241,93 @@ public class GameEngine extends Activity {
                 puckYposition += puckYvelocity * ((float) clockTick);
             }
 
+//            // Check puck collision with mallet2
+//            if (isPuckMalletColliding(mallet2_XPosition, mallet2_YPosition, mallet2_Radius)) {
+//                // Collision detected between player mallet and puck, give the puck the mallet velocity
+//                System.out.println("puck x velocity: " + puckXvelocity);
+//                System.out.println("puck y velocity: " + puckYvelocity);
+//                puckYvelocity = -puckYvelocity;
+//                puckXvelocity = puckXposition - mallet2_XPosition;
+//                puckXposition += puckXvelocity * ((float) clockTick);
+//                puckYposition += puckYvelocity * ((float) clockTick);
+//                System.out.println("puck x: " + puckXposition + puckXvelocity * ((float) clockTick));
+//                System.out.println("puck y: " + puckYposition + puckYvelocity * ((float) clockTick));
+//            }
+
             // Check puck collision with mallet2
-            if (isPuckMalletColliding(mallet2_XPosition, mallet2_YPosition, mallet2_Radius)) {
-                // Collision detected between player mallet and puck, give the puck the mallet velocity
-                puckYvelocity = -puckYvelocity;
-                puckXvelocity = puckXposition - mallet2_XPosition;
-                puckXposition += puckXvelocity * ((float) clockTick);
-                puckYposition += puckYvelocity * ((float) clockTick);
+            // check for x-axis collision]
+            //puck left against mallet right
+            float x1 = (puckXposition-puckRadius)-(mallet2_XPosition+mallet2_Radius);
+            //puck right against mallet left
+            float x2 = (mallet2_XPosition-mallet2_Radius)-(puckXposition+puckRadius);
+            //puck top against mallet bottom
+            float y1 = (puckYposition-puckRadius)-(mallet2_YPosition+mallet2_Radius);
+            //puck bottom against mallet top
+            float y2 = (mallet2_YPosition-mallet2_Radius)-(puckYposition+puckRadius);
+
+            if(isPuckMalletColliding(mallet2_XPosition, mallet2_YPosition, mallet2_Radius)) {
+                if ( (puckXposition - puckRadius) - (mallet2_XPosition + mallet2_Radius) <= 0 && (puckXposition - puckRadius) - (mallet2_XPosition + mallet2_Radius) > -mallet2_Radius) {
+                    float dist = (puckXposition - puckRadius) - (mallet2_XPosition + mallet2_Radius);
+                    puckXposition -= (-dist);
+                    puckXvelocity = -puckXvelocity;
+                }
+                else if ((mallet2_XPosition - mallet2_Radius) - (puckXposition + puckRadius) <= 0 && (mallet2_XPosition - mallet2_Radius) - (puckXposition + puckRadius) > -mallet2_Radius) {
+                    float dist = (mallet2_XPosition - mallet2_Radius) - (puckXposition + puckRadius);
+                    puckXposition += (-dist);
+                    puckXvelocity = -puckXvelocity;
+                }
+                if ((puckYposition - puckRadius) - (mallet2_YPosition + mallet2_Radius) <= 0) {
+                    float dist = (puckYposition - puckRadius) - (mallet2_YPosition + mallet2_Radius);
+                    puckYposition += (-dist);
+                    puckYvelocity = -puckYvelocity;
+                }
+                else if ((mallet2_YPosition - mallet2_Radius) - (puckYposition + puckRadius) <= 0) {
+                    float dist = (mallet2_YPosition - mallet2_Radius) - (puckYposition + puckRadius);
+                    puckYposition -= (-dist);
+                    //puckYvelocity = puckYvelocity;
+                }
             }
+
+//            if (puckYposition > (mallet2_YPosition - mallet2_Radius) && puckYposition < (mallet2_YPosition + mallet2_Radius)) {
+//                // coll from the right
+//                if ((puckXposition - puckRadius) < (mallet2_XPosition + mallet2_Radius) && (puckXposition < (mallet2_XPosition + mallet2_Radius + 1))) {
+//                    float dist = (mallet2_XPosition + mallet2_Radius) - (puckXposition - puckRadius);
+//                    puckXposition += (dist + 1);
+//                    puckXvelocity = -puckXvelocity;
+//                // coll from the left
+//                } else if ((puckXposition + puckRadius) > (mallet2_XPosition - mallet2_Radius) && (puckXposition > (mallet2_XPosition - mallet2_Radius - 1))) {
+//                    float dist = (puckXposition + puckRadius) - (mallet2_XPosition - mallet2_Radius);
+//                    puckXposition -= (dist - 1);
+//                    puckXvelocity = -puckXvelocity;
+//                }
+//                //if (puckXvelocity == 0) {
+//                //    puckXvelocity = 0.4f;
+//                //}
+//            }
+//            // check for y-axis collision
+//            else if (puckXposition > (mallet2_XPosition - mallet2_Radius) && puckXposition < (mallet2_XPosition + mallet2_Radius)) {
+//                // coll from the top
+//                if ((puckYposition + puckRadius) > (mallet2_YPosition - mallet2_Radius) && (puckYposition < (mallet2_YPosition + mallet1_Radius + 1))) {
+//                    float dist = (puckYposition + puckRadius) - (mallet2_YPosition - mallet2_Radius);
+//                    puckYposition -= (dist - 1);
+//                    puckYvelocity = -puckYvelocity;
+//                    // coll from the bottom
+//                } else if ((puckYposition - puckRadius) < (mallet2_YPosition + mallet2_Radius) && (puckYposition > (mallet2_YPosition - mallet1_Radius - 1))) {
+//                    float dist = (mallet2_YPosition + mallet2_Radius) - (puckYposition - puckRadius);
+//                    puckYposition += (dist + 1);
+//                    puckYvelocity = -puckYvelocity;
+//                }
+//                if (puckYvelocity == 0) {
+//                    puckYvelocity = 0.4f;
+//                }
+//            }
+
+
+
 
             // Check collision of puck with canvas
             if (collideLeft(puckXposition, puckRadius)
-                || collideRight(puckXposition, puckRadius)) {
+                    || collideRight(puckXposition, puckRadius)) {
                 puckXvelocity = -puckXvelocity;
                 if (collideLeft(puckXposition, puckRadius)) puckXposition = puckRadius;
                 if (collideRight(puckXposition, puckRadius)) puckXposition = canvasWidth - puckRadius;
@@ -241,28 +337,88 @@ public class GameEngine extends Activity {
 
             if (collideTop(puckYposition, puckRadius)
                     || collideBottom(puckYposition, puckRadius)) {
-                if (collideTop(puckYposition, puckRadius)) player2Score++;
-                if (collideBottom(puckYposition, puckRadius)) player1Score++;
-                puckXvelocity = 0;
-                puckYvelocity = 0;
-                puckXposition = canvasWidth / 2;
-                puckYposition = canvasHeight / 2;
+                //if (collideTop(puckYposition, puckRadius)) player2Score++; // check if puck is in ai goal
+                if (collideTop(puckYposition, puckRadius)) {
+                    if (puckXposition > theirGoal.left && puckXposition < theirGoal.right) {
+                        player1Score++;
+                        puckXvelocity = 0;
+                        puckYvelocity = 0;
+                        puckXposition = canvasWidth / 2;
+                        puckYposition = canvasHeight / 2;
+                    } else {
+                        puckYvelocity = -puckYvelocity;
+                        puckYposition = puckRadius;
+                    }
+                }
+                //if (collideBottom(puckYposition, puckRadius)) player1Score++; // check if puck is in player goal
+                if (collideBottom(puckYposition, puckRadius)) {
+                    if (puckXposition > myGoal.left && puckXposition < myGoal.right) {
+                        player2Score++;
+                        puckXvelocity = 0;
+                        puckYvelocity = 0;
+                        puckXposition = canvasWidth / 2;
+                        puckYposition = canvasHeight / 2;
+                    } else {
+                        puckYvelocity = -puckYvelocity;
+                        puckYposition = canvasHeight - 85 - puckRadius;
+                    }
+                }
             }
 
             // check AI
+            // moves ai left and right depending on x coord of the puck
+            // add in y coord movement
             if (aiEnabled) {
-                if (puckXposition - 50 > mallet2_XPosition) {
+                if (puckXposition - puckRadius > mallet2_XPosition) {
                     mallet2_XPosition += aiSpeed * ((float) clockTick);
                 }
 
-                if (puckXposition + 50 < mallet2_XPosition) {
+                if (puckXposition + puckRadius < mallet2_XPosition) {
                     mallet2_XPosition -= aiSpeed *((float) clockTick);
+                }
+
+                // if the puck is on player 1's side
+                if (puckYposition > canvasHeight/2) {
+                    if (mallet2_YPosition > 100 + mallet2_Radius) {
+                        mallet2_YPosition -= aiSpeed * ((float) clockTick);
+                    }
+                    // else if the puck is on the ai's side
+                } else if (puckYposition <= canvasHeight/2) {
+                    //if the puck ycoord > ai ycoord
+                    if (mallet2_YPosition < puckYposition) {
+                        mallet2_YPosition += aiSpeed * ((float) clockTick);
+                        // else if the puck ycoord < ai ycoord
+                    } else if (mallet2_YPosition > puckYposition) {
+                        //if the mallet has not reached its lowest ycoord position
+                        if (mallet2_YPosition >= (100 + mallet1_Radius)) {
+                            mallet2_YPosition -= aiSpeed * ((float) clockTick);
+                        }
+
+                    }
+
+                }
+                // Check to see if AI is crossing the center line
+                if((mallet2_YPosition + mallet2_Radius) >= canvasHeight/2) {
+                    //System.out.println("mallet1_YPosition is > canvasHeight/2");
+                    mallet2_YPosition = ((canvasHeight/2) - mallet2_Radius);
                 }
             }
 
             puckXvelocity -= (1 - canvasFriction) * clockTick * puckXvelocity;
             puckYvelocity -= (1 - canvasFriction) * clockTick * puckYvelocity;
             mVelocityTracker.clear();
+
+            // changing timer
+            curTime = System.currentTimeMillis();
+
+            if(startTime+1000 <curTime) {
+                startTime = curTime;
+                secLeft--;
+            }
+
+            if(secLeft == 0) {
+                // END THE GAME!!!
+            }
         }
 
         // Draw the newly updated scene
@@ -275,7 +431,8 @@ public class GameEngine extends Activity {
                 canvas = ourHolder.lockCanvas();
 
                 // Draw the background color
-                canvas.drawColor(Color.argb(255,  26, 128, 182));
+                //canvas.drawColor(Color.argb(255,  26, 128, 182));
+                canvas.drawColor(Color.parseColor("#FFFFFF"));
 
                 // Choose the brush color for drawing
                 paint.setColor(Color.argb(255,  249, 129, 0));
@@ -297,15 +454,27 @@ public class GameEngine extends Activity {
                 paint.setStrokeWidth(8);
                 int scaledSize = getResources().getDimensionPixelSize(R.dimen.scoreTextSize);
                 paint.setTextSize(scaledSize);
-                canvas.drawText(player1Score + "", (canvasWidth * 0.75f), (canvasHeight / 2) * 0.9f, paint);
-                canvas.drawText(player2Score + "", (canvasWidth * 0.75f), (canvasHeight / 2) * 1.2f, paint);
+                //canvas.drawText(player1Score + "", (canvasWidth * 0.75f), (canvasHeight / 2) * 0.9f, paint);
+                //canvas.drawText(player2Score + "", (canvasWidth * 0.75f), (canvasHeight / 2) * 1.2f, paint);
+                paint.setColor(Color.parseColor("#0000FF"));
+                canvas.drawText(player1Score + "", (canvasWidth * 0.90f), (canvasHeight / 2) * 1.2f, paint);
+                paint.setColor(Color.parseColor("#FF0000"));
+                canvas.drawText(player2Score + "", (canvasWidth * 0.90f), (canvasHeight / 2) * 0.9f, paint);
+                paint.setColor(Color.parseColor("#000000"));
                 canvas.drawLine(0, canvasHeight / 2, canvasWidth, canvasHeight / 2, paint);
                 canvas.drawCircle(canvasWidth / 2, canvasHeight / 2, 100, paint);
 
                 paint.setStyle(Paint.Style.FILL);
 
+                // Draw goals
+                paint.setColor(Color.parseColor("#0000FF"));
+                canvas.drawRect(myGoal, paint);
+                paint.setColor(Color.parseColor("#FF0000"));
+                canvas.drawRect(theirGoal, paint);
+
                 // Draw player mallet (BLUE)
-                paint.setColor(Color.parseColor("#ADD8E6"));
+                //paint.setColor(Color.parseColor("#ADD8E6"));
+                paint.setColor(Color.parseColor("#0000FF"));
                 canvas.drawCircle(mallet1_XPosition, mallet1_YPosition, mallet1_Radius, paint);
 
                 // Draw AI mallet (RED)
@@ -315,6 +484,9 @@ public class GameEngine extends Activity {
                 // Draw puck (BLACK)
                 paint.setColor(Color.parseColor("#000000"));
                 canvas.drawCircle(puckXposition, puckYposition, puckRadius, paint);
+
+                //draw time
+                canvas.drawText(":"+secLeft,1250,100,paint);
 
                 // Draw everything to the screen
                 // and unlock the drawing surface
@@ -385,6 +557,14 @@ public class GameEngine extends Activity {
                             boolean isCollidingUpDown = (collideBottom(mallet1_YPosition, mallet1_Radius) &&
                                     collideTop(newY, mallet1_Radius));
 
+                            if (collideLeft(mallet1_XPosition, mallet1_Radius)) {
+                                mallet1_XPosition = mallet1_Radius;
+                            }
+
+                            if (collideRight(puckXposition, puckRadius)) {
+                                mallet1_XPosition = canvasWidth - mallet1_Radius;
+                            }
+
                             if (!isCollidingLeftRight) {
                                 mallet1_XPosition = newX;
                             }
@@ -392,8 +572,8 @@ public class GameEngine extends Activity {
                             if (!isCollidingUpDown) {
                                 mallet1_YPosition = newY;
                             }
-                        // else we are colliding with the puck, allow movement if it makes us unstuck
-                        // with the puck
+                            // else we are colliding with the puck, allow movement if it makes us unstuck
+                            // with the puck
                         } else {
                             boolean isCollidingLeftRight = collideLeft(newX, mallet1_Radius) &&
                                     collideRight(newX, mallet1_Radius);
@@ -410,7 +590,16 @@ public class GameEngine extends Activity {
                                 }
                             }
                         }
+                        // Check if crossing center line (ADD THIS BACK IN AFTER AI GETS FIXED!)
+                        // mallet1 is the player mallet
+                        //System.out.println("mallet1_YPosition = " + mallet1_YPosition);
+                        if((mallet1_YPosition - mallet1_Radius) <= canvasHeight/2) {
+                            //System.out.println("mallet1_YPosition is > canvasHeight/2");
+                            mallet1_YPosition = ((canvasHeight/2) + mallet1_Radius);
+                        }
                     }
+
+
 
                     break;
 

@@ -91,7 +91,7 @@ public class MyHighScoreRecyclerViewAdapter extends RecyclerView.Adapter<MyHighS
         public HighScore mItem;
 
         /**
-         * Returns mContentView as a String. 
+         * Returns mContentView as a String.
          * @param view
          */
         public ViewHolder(View view) {
