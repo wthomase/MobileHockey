@@ -53,6 +53,16 @@ public class SubmitHighScoreActivity extends AppCompatActivity {
     }
 
     /**
+     * Switches us from the HighScore Activity to the main menu. Used for when the user
+     * clicks on the "MainMenu" button.
+     * @param view
+     */
+    public void returnToMainMenu(View view) {
+        Intent intent = new Intent(this, LoginMenuActivity.class);
+        startActivity(intent);
+    }
+
+    /**
      * Saves the high score to the database.
      * @param URL
      */

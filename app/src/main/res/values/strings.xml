@@ -3,10 +3,21 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_login_menu">Main Menu</string>
     <string name="game_over_text">Game Over! Would you like to share your score?</string>
+    <string name="share_score_ques">Share score via messaging:</string>
+    <string name="share_score_ldrbrd">Submit score to high scores leaderboard:</string>
+    <string name="return_to_menu_hint">Return to Main Menu:</string>
     <string name="LOGIN_PREFS">edu.uw.tacoma.wthomase.MobileHockey.PREFS</string>
     <string name="LOGIN_FILE"> edu.uw.tacoma.wthomase.MobileHockey.LOGIN_FILE</string>
     <string name="LOGGEDIN">loggedin</string>
     <string name="USERNAME_KEY">username</string>
+
+    <string name="share_scores_text">Game Over! Would you like to share your score or return to the menu?</string>
+    <string name="return_to_menu">Main Menu</string>
+    <string name="share">Share</string>
+
+    <!-- buttons -->
+    <string name="launch_fire_missiles">Launch Fire Missiles</string>
+
 
 
     <!-- TODO: Remove or change this placeholder text -->

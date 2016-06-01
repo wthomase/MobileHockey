@@ -35,7 +35,7 @@ public class HighScore implements Serializable, Comparable<HighScore> {
      *  @return whether this high score is higher than the given high score.
      */
     public int compareTo(HighScore other) {
-        return Integer.parseInt(other.getmHighScore()) - Integer.parseInt(mHighScore);
+        return Integer.parseInt(mHighScore) - Integer.parseInt(other.getmHighScore());
     }
 
     /** Getter method for the high score.
@@ -47,6 +47,9 @@ public class HighScore implements Serializable, Comparable<HighScore> {
 
     /** Setter method for the high score. */
     public void setmHighScore(String mHighScore) {
+        // Provides a check to see if the passed score is valid
+        Integer.parseInt(mHighScore);
+
         this.mHighScore = mHighScore;
     }
 
@@ -68,7 +71,7 @@ public class HighScore implements Serializable, Comparable<HighScore> {
      * @param highscoreJSON
      * @return reason or null if successful.
      */
-    public static String parseCourseJSON(String highscoreJSON, List<HighScore> highScoreList) {
+    public static String parseHighScoreJSON(String highscoreJSON, List<HighScore> highScoreList) {
         String reason = null;
         if (highscoreJSON != null) {
             try {
@@ -81,6 +84,8 @@ public class HighScore implements Serializable, Comparable<HighScore> {
                 }
 
                 Collections.sort(highScoreList);
+                Collections.reverse(highScoreList);
+
             } catch (JSONException e) {
                 reason =  "Unable to parse data, Reason: " + e.getMessage();
             }

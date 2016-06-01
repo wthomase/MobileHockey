@@ -180,7 +180,7 @@ public class HighScoreListFragment extends Fragment {
             }
 
             List<HighScore> courseList = new ArrayList<HighScore>();
-            result = HighScore.parseCourseJSON(result, courseList);
+            result = HighScore.parseHighScoreJSON(result, courseList);
             // Something wrong with the JSON returned.
             if (result != null) {
                 Toast.makeText(getActivity().getApplicationContext(), result, Toast.LENGTH_LONG)

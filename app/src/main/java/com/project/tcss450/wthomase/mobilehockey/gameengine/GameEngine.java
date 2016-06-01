@@ -1,9 +1,8 @@
 package com.project.tcss450.wthomase.mobilehockey.gameengine;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -16,6 +15,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.VelocityTracker;
 
+import com.project.tcss450.wthomase.mobilehockey.EndGameFragment;
+import com.project.tcss450.wthomase.mobilehockey.LoginMenuActivity;
 import com.project.tcss450.wthomase.mobilehockey.R;
 
 public class GameEngine extends Activity {
@@ -112,9 +113,8 @@ public class GameEngine extends Activity {
         private RectF theirGoal;
 
         // current time
-        private long curTime;
         private long startTime;
-        private int secLeft;
+        private long gameDuration;
 
 
         // When the we initialize (call new()) on gameView
@@ -167,7 +167,7 @@ public class GameEngine extends Activity {
             theirGoal = new RectF(canvasWidth/4, 0, (canvasWidth/4)*3, 20);
 
             startTime = System.currentTimeMillis();
-            secLeft = 60;
+            gameDuration = 60000;
         }
 
         @Override
@@ -408,16 +408,16 @@ public class GameEngine extends Activity {
             puckYvelocity -= (1 - canvasFriction) * clockTick * puckYvelocity;
             mVelocityTracker.clear();
 
-            // changing timer
-            curTime = System.currentTimeMillis();
+            if (System.currentTimeMillis() >= startTime + gameDuration) {
+                // our current time has exceeded our timer
 
-            if(startTime+1000 <curTime) {
-                startTime = curTime;
-                secLeft--;
-            }
+                // change the playing variable, pop up a dialog
+                LoginMenuActivity.mostRecentHighScore = player1Score + "";
+                playing = false;
 
-            if(secLeft == 0) {
-                // END THE GAME!!!
+                // Launch our DialogFragment to signal the end of the game
+                DialogFragment newFragment = new EndGameFragment();
+                newFragment.show(getFragmentManager(), "end_game_dialog");
             }
         }
 
@@ -440,13 +440,13 @@ public class GameEngine extends Activity {
                 // Make the text a bit bigger
                 paint.setTextSize(45);
 
-                // Display the current fps on the screen
-                canvas.drawText("FPS:" + fps, 20, 40, paint);
-                mVelocityTracker.computeCurrentVelocity(1000, puckMaxVelocity);
-                canvas.drawText("X-vel: " + mVelocityTracker.getXVelocity(), 20, 80, paint);
-                canvas.drawText("Y-vel: " + mVelocityTracker.getYVelocity(), 20, 140, paint);
-                canvas.drawText("current X Pos: " + mallet1_XPosition, 20, 250, paint);
-                canvas.drawText("current Y Pos: " + mallet1_YPosition, 20, 280, paint);
+                // Display the current fps on the screen (DEBUG)
+//                canvas.drawText("FPS:" + fps, 20, 40, paint);
+//                mVelocityTracker.computeCurrentVelocity(1000, puckMaxVelocity);
+//                canvas.drawText("X-vel: " + mVelocityTracker.getXVelocity(), 20, 80, paint);
+//                canvas.drawText("Y-vel: " + mVelocityTracker.getYVelocity(), 20, 140, paint);
+//                canvas.drawText("current X Pos: " + mallet1_XPosition, 20, 250, paint);
+//                canvas.drawText("current Y Pos: " + mallet1_YPosition, 20, 280, paint);
 
                 // Draw "hockey table" elements
                 paint.setStyle(Paint.Style.STROKE);
@@ -485,8 +485,9 @@ public class GameEngine extends Activity {
                 paint.setColor(Color.parseColor("#000000"));
                 canvas.drawCircle(puckXposition, puckYposition, puckRadius, paint);
 
-                //draw time
-                canvas.drawText(":"+secLeft,1250,100,paint);
+                // Draw time remaining
+                long timeLeft = ((startTime + gameDuration) - System.currentTimeMillis()) / 1000;
+                canvas.drawText("" + timeLeft, (canvasWidth * 0.1f), (canvasHeight / 2) * 0.9f, paint);
 
                 // Draw everything to the screen
                 // and unlock the drawing surface
