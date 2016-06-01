@@ -32,6 +32,7 @@
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:id="@+id/go_to_highscores_button"
             android:text="High Scores"
             android:layout_gravity="center_horizontal"
             android:onClick="switchToHighScoreActivity"/>
