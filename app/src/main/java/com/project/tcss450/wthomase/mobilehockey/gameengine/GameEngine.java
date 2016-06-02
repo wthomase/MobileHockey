@@ -15,15 +15,28 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.VelocityTracker;
 
-import com.project.tcss450.wthomase.mobilehockey.EndGameFragment;
+import com.project.tcss450.wthomase.mobilehockey.EndGameDialog;
 import com.project.tcss450.wthomase.mobilehockey.LoginMenuActivity;
 import com.project.tcss450.wthomase.mobilehockey.R;
 
+/**
+ * Primary GameEngine class used to display graphics and run our game. Implements its own run and
+ * update/render loops to process the data within the game. Utilizes two inner-classes, a Timer
+ * class to "tick" the game forward and a GameView class (SurfaceView) to display and update the
+ * game.
+ *
+ * The implementation of this engine was initially aided by some basic "skeleton" code from the
+ * following URL:
+ *
+ * http://gamecodeschool.com/android/building-a-simple-game-engine/
+ *
+ */
+
 public class GameEngine extends Activity {
 
-    // gameView will be the view of the game
-    // It will also hold the logic of the game
-    // and respond to screen touches as well
+    /**
+     * Stores an instance of our GameView, used to display graphics and store our game logic.
+     */
     GameView gameView;
 
     @Override
@@ -36,93 +49,109 @@ public class GameEngine extends Activity {
 
     }
 
-    // Here is our implementation of GameView
-    // It is an inner class.
-    // Note how the final closing curly brace }
-    // is inside SimpleGameEngine
-
-    // Notice we implement runnable so we have
-    // A thread and can override the run method.
+    /**
+     * Inner GameView class used to display graphics through SurfaceView and store game logic.
+     */
     class GameView extends SurfaceView implements Runnable {
 
-        // This is our thread
+        /** Stores the games Thread */
         Thread gameThread = null;
 
-        // This is new. We need a SurfaceHolder
-        // When we use Paint and Canvas in a thread
-        // We will see it in action in the draw method soon.
+        /** SurfaceHolder used for Paint and Canvas. */
         SurfaceHolder ourHolder;
 
-        // A boolean which we will set and unset
-        // when the game is running- or not.
+        /** Volatile boolean value to store whether the game is active
+         * or not (whether the update/render loop should run) */
         private volatile boolean playing;
 
-        // A Canvas and a Paint object
+        /** Canvas object used to paint graphics to the screen. */
         private Canvas canvas;
+        /** Paint object used to help paint graphics to the screen. */
         private Paint paint;
 
-        // Canvas data
+        /** Stores this Canvas' width. */
         private int canvasWidth;
+        /** Stores this Canvas' height. */
         private int canvasHeight;
+        /** Stores our psuedo-friction value for physics calculations */
         private float canvasFriction = 0.9f;
 
-        // This variable tracks the game frame rate
+        /** Long variable used to store the framerate (used for debugging) */
         private long fps;
 
-        // Used to track the velocity of touch based events
+        /** VelocityTracker used to store and access the touch input velocity of the player. */
         private VelocityTracker mVelocityTracker;
 
-        // This is used to help calculate the fps
+        /** Long variable used to store the duration of this frame, used in FPS calculations. */
         private long timeThisFrame;
 
+        /** Game Timer used to help tick the game logic at a consistent rate independent of FPS. */
         private Timer gameTimer;
+        /** Stores the current clockTick duration delay. */
         private double clockTick;
 
-        // AI variables
+        /** Stores whether the AI should be enabled. */
         private boolean aiEnabled;
+        /** Stores the AI mallet speed. */
         private float aiSpeed;
 
         // Scoreboard
+        /** Stores the player1 (main player) score */
         private int player1Score;
+        /** Stores the player2 (AI player or player2) score */
         private int player2Score;
 
         // Detects whether the mallet is moving or not
-        private boolean isMoving = false;
+        /** Boolean flag to determine whether touch input is detected. */
+        private boolean isMoving;
 
         // The player mallet data
+        /** Stores player1's mallet X position. */
         private float mallet1_XPosition;
+        /** Stores player1's mallet Y position. */
         private float mallet1_YPosition;
+        /** Stores the player1's mallet radius. */
         private float mallet1_Radius;
 
 
         // The AI mallet data
+        /** Stores player2's (AI) mallet X position. */
         private float mallet2_XPosition;
+        /** Stores player2's (AI) mallet Y position. */
         private float mallet2_YPosition;
+        /** Stores player2's (AI) radius */
         private float mallet2_Radius;
 
         // Puck data
+        /** Stores the puck's X position. */
         private float puckXposition;
+        /** Stores the puck's Y position. */
         private float puckYposition;
+        /** Stores the puck radius. */
         private float puckRadius;
-        private float puckXvelocity = 0;
-        private float puckYvelocity = -500;
-        private float puckMaxVelocity = 2500;
+        /** Stores the puck's current X velocity. */
+        private float puckXvelocity;
+        /** Stores the puck's current Y velocity. */
+        private float puckYvelocity;
+        /** Stores the puck's maximum allowed velocity. */
+        private float puckMaxVelocity;
 
         // Goal objects
+        /** The rectangle that represents player1's goal. */
         private RectF myGoal;
+        /** The rectangle that represents player2's (AI) goal. */
         private RectF theirGoal;
 
-        // current time
+        // Time settings
+        /** Stores the startTime when the game starts. */
         private long startTime;
+        /** Stores the duration of the game in milliseconds. */
         private long gameDuration;
 
-
-        // When the we initialize (call new()) on gameView
-        // This special constructor method runs
+        /** Constructs a new GameView and initializes all of our initial game states. */
         public GameView(Context context) {
             // The next line of code asks the
             // SurfaceView class to set up our object.
-            // How kind.
             super(context);
 
             // Initialize ourHolder and paint objects
@@ -136,6 +165,7 @@ public class GameEngine extends Activity {
             Log.d("debug", "Canvas width: " + canvasWidth);
             canvasHeight = d.heightPixels;
             Log.d("debug", "Canvas height: " + canvasHeight);
+            isMoving = false;
 
             aiEnabled = true;
             //aiSpeed = 250;
@@ -160,6 +190,9 @@ public class GameEngine extends Activity {
 
             puckXposition = (canvasWidth / 2);
             puckYposition = (canvasHeight / 2);
+            puckXvelocity = 0;
+            puckYvelocity = 500;
+            puckMaxVelocity = 2500;
             puckRadius = 75;
 
             // goals
@@ -197,9 +230,10 @@ public class GameEngine extends Activity {
 
         }
 
-        // Everything that needs to be updated goes in here
-        // In later projects we will have dozens (arrays) of objects.
-        // We will also do other things like collision detection.
+        /**
+         * The game's core update loop, updates all of the positions of the mallets, puck timer
+         * and score. Detects collisions between the mallet and puck.
+         */
         public void update() {
 
             // Update puck position
@@ -420,12 +454,15 @@ public class GameEngine extends Activity {
                 playing = false;
 
                 // Launch our DialogFragment to signal the end of the game
-                DialogFragment newFragment = new EndGameFragment();
+                DialogFragment newFragment = new EndGameDialog();
                 newFragment.show(getFragmentManager(), "end_game_dialog");
             }
         }
 
-        // Draw the newly updated scene
+        /**
+         * The game's draw (or "render") method. Draws all of our graphical and UI elements to the
+         * screen.
+         */
         public void draw() {
 
             // Make sure our drawing surface is valid or we crash
@@ -502,6 +539,10 @@ public class GameEngine extends Activity {
 
         // If SimpleGameEngine Activity is paused/stopped
         // shutdown our thread.
+
+        /**
+         * Helper method to determine game behavior when pausing.
+         */
         public void pause() {
             playing = false;
             try {
@@ -514,6 +555,10 @@ public class GameEngine extends Activity {
 
         // If SimpleGameEngine Activity is started then
         // start our thread.
+
+        /**
+         * Helper method to determine game behavior when resuming.
+         */
         public void resume() {
             playing = true;
             gameThread = new Thread(this);
@@ -627,6 +672,13 @@ public class GameEngine extends Activity {
             return true;
         }
 
+        /**
+         * Helper method to determine whether a mallet is colliding with the puck.
+         * @param x1 is the x coordinate of the given mallet.
+         * @param y1 is the y coordinate of the given mallet.
+         * @param radius is the radius of the given mallet.
+         * @return whether the mallet is colliding with the puck.
+         */
         public boolean isPuckMalletColliding(float x1, float y1, float radius) {
             // Check collision of puck with mallet
             return circlesColliding(radius, puckRadius, x1, y1, puckXposition, puckYposition);
@@ -634,42 +686,97 @@ public class GameEngine extends Activity {
         }
 
         // Checks whether the given touch coordinates are colliding with our mallet on screen.
+
+        /**
+         * Given the touchX and touchY coordinates, returns whether the X and Y coordinates are
+         * within the bounds of the given mallet (x, y, radius).
+         * @param radius is the radius of the mallet.
+         * @param x is the x-coordinate of the mallet.
+         * @param y is the y-coordinate of the mallet.
+         * @param touchX is the x-coordinate of the touch point.
+         * @param touchY is the y-coordinate of the touch point.
+         * @return whether the touch point collides with the given mallet info.
+         */
         public boolean isTouchColliding(float radius, float x, float y, float touchX, float touchY) {
             return circlesColliding(radius, 1, x, y, touchX, touchY);
         }
 
+        /**
+         * Simply returns whether the two circles collide, given their coordinates and radii.
+         * @param radius1 the radius of the first circle.
+         * @param radius2 the radius of the second circle.
+         * @param x1 the x-coordinate of the first circle.
+         * @param y1 the y-coordinate of the first circle.
+         * @param x2 the x-coordiante of the second circle.
+         * @param y2 the y-coordinate of the second circle.
+         * @return whether the two circles collide or not.
+         */
         public boolean circlesColliding(float radius1, float radius2, float x1, float y1, float x2, float y2) {
             return distance(x1, y1, x2, y2) < radius1 + radius2;
         }
 
+        /**
+         * Determines whether the the given circle collides with the edge of our screen.
+         * @param x is the x-coordinate of the circle.
+         * @param radius is the radius of the circle.
+         */
         public boolean collideLeft(float x, float radius) {
             return x - radius < 0;
         }
 
+        /**
+         *
+         * @param x is the x-coordinate of the circle.
+         * @param radius is the radius of the circle.
+         * @return
+         */
         public boolean collideRight(float x, float radius) {
             return x + radius > canvasWidth;
         }
 
+        /**
+         * Determines whether the the given circle collides with the edge of our screen.
+         * @param y is the y-coordinate of the circle.
+         * @param radius is the radius of the circle.
+         */
         public boolean collideTop(float y, float radius) {
             return y - radius < 0;
         }
 
+        /**
+         * Determines whether the the given circle collides with the edge of our screen.
+         * @param y is the y-coordinate of the circle.
+         * @param radius is the radius of the circle.
+         */
         public boolean collideBottom(float y, float radius) {
             return y + radius > canvasHeight;
         }
     }
 
+    /**
+     * Inner Timer class used to "tick" the game logic forward independent of frame rate.
+     */
     class Timer {
+        /** Used to store the current gameTime. */
         private double gameTime;
+        /** Used to cap the simulation rate of the game. */
         private double maxStep;
+        /** Used to store the last time stamp of the game. */
         private double wallLastTimestamp;
 
+        /**
+         * Initializes a new Timer.
+         */
         public Timer() {
             gameTime = 0;
             maxStep = .05;
             wallLastTimestamp = 0;
         }
 
+        /**
+         * Ticks the game forward, taking timeDelta into account.
+         * @return the new deltaTime.
+         */
         public double tick() {
             double wallCurrent = System.currentTimeMillis();
             double wallDelta = (wallCurrent - wallLastTimestamp) / 1000;
@@ -701,6 +808,14 @@ public class GameEngine extends Activity {
         gameView.pause();
     }
 
+    /**
+     * Private helper method, simply calculates distance between two points.
+     * @param x1 is the x-coordinate of the first point.
+     * @param y1 is the y-coordinate of the first point.
+     * @param x2 is the x-coordinate of the second point.
+     * @param y2 is the y-coordinate of the second point.
+     * @return the distance between the two points.
+     */
     private float distance(float x1, float y1, float x2, float y2) {
         float dx = x1 - x2;
         float dy = y1 - y2;

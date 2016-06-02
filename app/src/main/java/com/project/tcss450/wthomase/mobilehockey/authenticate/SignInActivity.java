@@ -29,7 +29,9 @@ import java.net.URL;
  */
 public class SignInActivity extends AppCompatActivity implements LoginFragment.LoginInteractionListener {
 
+    /** Stores a reference to the SharedPreferences */
     private static SharedPreferences mSharedPreferences;
+    /** Stores a reference to the SQLite DB */
     private UserInfoDB mUserInfoDB;
 
 

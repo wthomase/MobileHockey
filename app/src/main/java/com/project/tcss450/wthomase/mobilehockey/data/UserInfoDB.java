@@ -8,15 +8,24 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.project.tcss450.wthomase.mobilehockey.R;
 
+/**
+ * Local DB class used to store username and password per project specifications.
+ */
+
 public class UserInfoDB {
 
+    /** Stores the version of this DB */
     public static final int DB_VERSION = 1;
-    public static final String DB_NAME = "Course.db";
 
+    /** Stores the name of the DB */
+    public static final String DB_NAME = "Users.db";
+
+    /** Stores the instance of the inner helper class */
     private UserInfoDBHelper mUserInfoDBHelper;
+    /** Stores the actual SQLite DB. */
     private SQLiteDatabase mSQLiteDatabase;
 
-
+    /** Constructs a new UserInfoDB class. */
     public UserInfoDB(Context context) {
         mUserInfoDBHelper = new UserInfoDBHelper(
                 context, DB_NAME, null, DB_VERSION);
@@ -38,31 +47,48 @@ public class UserInfoDB {
         return rowId != -1;
     }
 
+    /**
+     * Helper method to close the SQLite DB.
+     */
     public void closeDB() {
         mSQLiteDatabase.close();
     }
 
+
+    /**
+     * Inner helper class used to create and drop the tables inside of the local DB.
+     */
     class UserInfoDBHelper extends SQLiteOpenHelper {
 
-        private final String CREATE_COURSE_SQL;
+        /** String used to store the syntax required to create a new table in the DB */
+        private final String CREATE_USERS_SQL;
 
-        private final String DROP_COURSE_SQL;
+        /** String used to store the syntax required to drop a new table in the DB. */
+        private final String DROP_USERS_SQL;
 
+        /**
+         * Constructs a new UserInfoDBHelper.
+         *
+         * @param context
+         * @param name
+         * @param factory
+         * @param version
+         */
         public UserInfoDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
             super(context, name, factory, version);
-            CREATE_COURSE_SQL = context.getString(R.string.CREATE_COURSE_SQL);
-            DROP_COURSE_SQL = context.getString(R.string.DROP_COURSE_SQL);
+            CREATE_USERS_SQL = context.getString(R.string.CREATE_USERS_TABLE_SQL);
+            DROP_USERS_SQL = context.getString(R.string.DROP_USERS_TABLE_SQL);
 
         }
 
         @Override
         public void onCreate(SQLiteDatabase sqLiteDatabase) {
-            sqLiteDatabase.execSQL(CREATE_COURSE_SQL);
+            sqLiteDatabase.execSQL(CREATE_USERS_SQL);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-            sqLiteDatabase.execSQL(DROP_COURSE_SQL);
+            sqLiteDatabase.execSQL(DROP_USERS_SQL);
             onCreate(sqLiteDatabase);
         }
     }

@@ -7,17 +7,21 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * EndGameDialog is used to display a DialogFragment at the end of a game.
+ *
+ * It queries the user as to whether they'd like to return to the Main Menu or
+ * transition to the SubmitHighScoreActivity.
  */
-public class EndGameFragment extends DialogFragment {
+public class EndGameDialog extends DialogFragment {
 
 
-    public EndGameFragment() {
-        // Required empty public constructor
+    /**
+     * Required empty public constructor.
+     */
+    public EndGameDialog() {
     }
 
     @Override

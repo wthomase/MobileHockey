@@ -50,14 +50,9 @@ public class LoginMenuActivity extends AppCompatActivity {
     }
 
     /**
-     * Opens the Activity to submit a new high score.
+     * Helper method to logout the currently logged in user on a button click.
      * @param view
      */
-    public void switchToSubmitHighScoreActivity(View view) {
-        Intent intent = new Intent(this, SubmitHighScoreActivity.class);
-        startActivity(intent);
-    }
-
     public void logoutUser(View view) {
         SharedPreferences sharedPreferences =
                 getSharedPreferences(getString(R.string.LOGIN_PREFS), Context.MODE_PRIVATE);

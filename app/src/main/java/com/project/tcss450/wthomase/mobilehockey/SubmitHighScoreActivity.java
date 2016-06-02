@@ -18,7 +18,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-// Temporary class to test submission of high scores to the database.
+/**
+ * SubmitHighScoreActivity is the Activity that the GameEngine switches to if the user selects
+ * "Share" in the EndGameDialog popup. It contains Sharing and Submission options for high scores
+ * and allows the user to return to the main menu.
+ */
 
 public class SubmitHighScoreActivity extends AppCompatActivity {
 
