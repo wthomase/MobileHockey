@@ -266,25 +266,29 @@ public class GameEngine extends Activity {
             float y2 = (mallet2_YPosition-mallet2_Radius)-(puckYposition+puckRadius);
 
             if(isPuckMalletColliding(mallet2_XPosition, mallet2_YPosition, mallet2_Radius)) {
+                // mallet hits top of puck
                 if ( (puckXposition - puckRadius) - (mallet2_XPosition + mallet2_Radius) <= 0 && (puckXposition - puckRadius) - (mallet2_XPosition + mallet2_Radius) > -mallet2_Radius) {
                     float dist = (puckXposition - puckRadius) - (mallet2_XPosition + mallet2_Radius);
                     puckXposition -= (-dist);
                     puckXvelocity = -puckXvelocity;
                 }
+                // mallet hits bottom of puck
                 else if ((mallet2_XPosition - mallet2_Radius) - (puckXposition + puckRadius) <= 0 && (mallet2_XPosition - mallet2_Radius) - (puckXposition + puckRadius) > -mallet2_Radius) {
                     float dist = (mallet2_XPosition - mallet2_Radius) - (puckXposition + puckRadius);
                     puckXposition += (-dist);
                     puckXvelocity = -puckXvelocity;
                 }
+                // mallet hits left side of puck
                 if ((puckYposition - puckRadius) - (mallet2_YPosition + mallet2_Radius) <= 0) {
                     float dist = (puckYposition - puckRadius) - (mallet2_YPosition + mallet2_Radius);
                     puckYposition += (-dist);
                     puckYvelocity = -puckYvelocity;
                 }
+                // mallet hits right side of puck
                 else if ((mallet2_YPosition - mallet2_Radius) - (puckYposition + puckRadius) <= 0) {
                     float dist = (mallet2_YPosition - mallet2_Radius) - (puckYposition + puckRadius);
                     puckYposition -= (-dist);
-                    //puckYvelocity = puckYvelocity;
+                    //puckYvelocity = -puckYvelocity;
                 }
             }
 
