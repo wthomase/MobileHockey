@@ -1,9 +1,7 @@
 package com.project.tcss450.wthomase.mobilehockey;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 
 import com.project.tcss450.wthomase.mobilehockey.model.HighScore;
 
